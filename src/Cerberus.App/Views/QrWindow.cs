@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -31,19 +31,19 @@ namespace Cerberus.App.Views
 		{
 			m_pe = pe;
 			IsDialog = true;
-			Title = "QR code";
+			Title = L.T("QR code");
 			SizeToContent = SizeToContent.WidthAndHeight;
 			ResizeMode = ResizeMode.NoResize;
 			WindowStartupLocation = WindowStartupLocation.CenterOwner;
 			ShowInTaskbar = false;
 
 			StackPanel root = new StackPanel { Margin = new Thickness(26, 20, 26, 20), Width = 380 };
-			root.Children.Add(new TextBlock { Text = "Scanner avec le téléphone", Style = (Style)FindResource("Title"), FontSize = 19 });
+			root.Children.Add(new TextBlock { Text = L.T("Scanner avec le téléphone"), Style = (Style)FindResource("Title"), FontSize = 19 });
 			root.Children.Add(new TextBlock { Text = pe.Strings.ReadSafe(PwDefs.TitleField), Style = (Style)FindResource("Subtitle"), Margin = new Thickness(0, 2, 0, 12) });
 
 			// segmented choice
 			StackPanel seg = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 0, 0, 14) };
-			RadioButton rbPw = Seg("Mot de passe", true), rbUser = Seg("Identifiant", false), rbBoth = Seg("Les deux", false);
+			RadioButton rbPw = Seg(L.T("Mot de passe"), true), rbUser = Seg(L.T("Identifiant"), false), rbBoth = Seg(L.T("Les deux"), false);
 			seg.Children.Add(rbPw); seg.Children.Add(rbUser); seg.Children.Add(rbBoth);
 			root.Children.Add(seg);
 
@@ -59,14 +59,14 @@ namespace Cerberus.App.Views
 			root.Children.Add(m_caption);
 
 			TextBlock warn = new TextBlock { Style = (Style)FindResource("Hint"), Margin = new Thickness(0, 12, 0, 0),
-				Text = "Le secret est visible à l'écran tant que cette fenêtre est ouverte : assurez-vous que personne ne regarde. Rien n'est enregistré ni envoyé." };
+				Text = L.T("Le secret est visible à l'écran tant que cette fenêtre est ouverte : assurez-vous que personne ne regarde. Rien n'est enregistré ni envoyé.") };
 			root.Children.Add(warn);
 
 			DockPanel bar = new DockPanel { Margin = new Thickness(0, 16, 0, 0), LastChildFill = false };
 			m_timer = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
 			m_timer.SetResourceReference(TextBlock.ForegroundProperty, "Warning");
 			bar.Children.Add(m_timer);
-			Button close = new Button { Content = "Fermer", MinWidth = 96, IsCancel = true, IsDefault = true };
+			Button close = new Button { Content = L.T("Fermer"), MinWidth = 96, IsCancel = true, IsDefault = true };
 			DockPanel.SetDock(close, Dock.Right);
 			bar.Children.Add(close);
 			close.Click += delegate { Close(); };
@@ -81,10 +81,10 @@ namespace Cerberus.App.Views
 			m_tick.Tick += delegate
 			{
 				--m_left;
-				m_timer.Text = "Fermeture automatique dans " + m_left + " s";
+				m_timer.Text = L.T("Fermeture automatique dans ") + m_left + " s";
 				if(m_left <= 0) Close();
 			};
-			m_timer.Text = "Fermeture automatique dans " + m_left + " s";
+			m_timer.Text = L.T("Fermeture automatique dans ") + m_left + " s";
 			m_tick.Start();
 			// Leaving the window (or the app) closes it, like a clipboard timeout.
 			Deactivated += delegate { if(IsLoaded) Close(); };
@@ -103,11 +103,11 @@ namespace Cerberus.App.Views
 			string user = m_pe.Strings.ReadSafe(PwDefs.UserNameField);
 			string pw = m_pe.Strings.ReadSafe(PwDefs.PasswordField);
 			string text;
-			if(mode == 0) { text = pw; m_caption.Text = "Mot de passe"; }
-			else if(mode == 1) { text = user; m_caption.Text = "Nom d'utilisateur"; }
-			else { text = "Identifiant : " + user + "\nMot de passe : " + pw; m_caption.Text = "Identifiant + mot de passe"; }
+			if(mode == 0) { text = pw; m_caption.Text = L.T("Mot de passe"); }
+			else if(mode == 1) { text = user; m_caption.Text = L.T("Nom d'utilisateur"); }
+			else { text = L.T("Identifiant : ") + user + "\n" + L.T("Mot de passe : ") + pw; m_caption.Text = L.T("Identifiant + mot de passe"); }
 
-			if(string.IsNullOrEmpty(text)) { m_img.Source = null; m_caption.Text += " (vide)"; return; }
+			if(string.IsNullOrEmpty(text)) { m_img.Source = null; m_caption.Text += L.T(" (vide)"); return; }
 			m_img.Source = Render(text);
 			m_left = AutoCloseSeconds; // restart the countdown on interaction
 		}

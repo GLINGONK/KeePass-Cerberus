@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
@@ -21,6 +21,7 @@ namespace Cerberus.App
 			this.DispatcherUnhandledException += OnUnhandled;
 
 			Settings.Load();
+			L.Init(Settings.Current.Language);
 			ApplyTheme(Settings.Current.Theme);
 
 			// Single instance per Windows session: two instances editing the same
@@ -29,7 +30,7 @@ namespace Cerberus.App
 			g_mutex = new System.Threading.Mutex(true, "Local\\KeePassCerberus.Wpf.SingleInstance", out bNew);
 			if(!bNew)
 			{
-				Dialog.Info(null, "KeePass Cerberus", "KeePass Cerberus est déjà ouvert (voir la barre des tâches).");
+				Dialog.Info(null, "KeePass Cerberus", L.T("KeePass Cerberus est déjà ouvert (voir la barre des tâches)."));
 				Shutdown();
 				return;
 			}
@@ -53,7 +54,7 @@ namespace Cerberus.App
 		private void OnUnhandled(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
 			e.Handled = true;
-			try { Dialog.Error(Current.MainWindow, "Erreur inattendue", e.Exception.Message); }
+			try { Dialog.Error(Current.MainWindow, L.T("Erreur inattendue"), e.Exception.Message); }
 			catch(Exception) { }
 		}
 

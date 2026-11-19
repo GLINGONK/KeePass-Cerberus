@@ -21,6 +21,7 @@ namespace Cerberus.App.Services
 	public sealed class Settings
 	{
 		public string Theme { get; set; } = "Dark";            // Dark | Light
+		public string Language { get; set; } = "auto";         // auto | fr | en | de | es | it | pt | nl | pl
 		public bool PreventScreenCapture { get; set; } = true;
 		public int AutoLockMinutes { get; set; } = 5;          // 0 = never
 		public bool LockOnSessionLock { get; set; } = true;

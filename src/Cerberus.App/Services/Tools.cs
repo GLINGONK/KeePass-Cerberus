@@ -168,11 +168,11 @@ namespace Cerberus.App.Services
 
 		public static string Label(uint bits)
 		{
-			if(bits == 0) return "vide";
-			if(bits < 50) return "faible";
-			if(bits < 80) return "correct";
-			if(bits < 110) return "fort";
-			return "très fort";
+			if(bits == 0) return L.T("vide");
+			if(bits < 50) return L.T("faible");
+			if(bits < 80) return L.T("correct");
+			if(bits < 110) return L.T("fort");
+			return L.T("très fort");
 		}
 	}
 
@@ -182,6 +182,7 @@ namespace Cerberus.App.Services
 		public sealed class Cat
 		{
 			public string Name { get; set; }
+			public string DisplayName { get { return L.T(Name); } }
 			public string Icon { get; set; }   // geometry resource key
 			public string Color { get; set; }
 			public int Count { get; set; }

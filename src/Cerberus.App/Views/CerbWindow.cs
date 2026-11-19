@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -48,8 +48,8 @@ namespace Cerberus.App.Views
 		/// <summary>"Anti-capture d'écran" check box, synced everywhere.</summary>
 		public static CheckBox CaptureCheckBox()
 		{
-			CheckBox cb = new CheckBox { Content = "Anti-capture d'écran", VerticalAlignment = VerticalAlignment.Center,
-				ToolTip = "Coché : cette application apparaît en noir dans les captures et partages d'écran." };
+			CheckBox cb = new CheckBox { Content = L.T("Anti-capture d'écran"), VerticalAlignment = VerticalAlignment.Center,
+				ToolTip = L.T("Coché : cette application apparaît en noir dans les captures et partages d'écran.") };
 			cb.IsChecked = Settings.Current.PreventScreenCapture;
 			bool bSync = false;
 			cb.Checked += delegate { if(!bSync) App.SetCaptureProtection(true); };
@@ -67,6 +67,9 @@ namespace Cerberus.App.Views
 	{
 		public static bool Show(Window owner, string strTitle, string strText, string strOk, string strCancel, bool bDanger = false)
 		{
+			// Translation is idempotent: already translated text passes through unchanged.
+			strTitle = L.T(strTitle); strText = L.T(strText); strOk = L.T(strOk);
+			if(strCancel != null) strCancel = L.T(strCancel);
 			CerbWindow w = new CerbWindow { Title = strTitle, SizeToContent = SizeToContent.WidthAndHeight,
 				ResizeMode = ResizeMode.NoResize, WindowStartupLocation = owner != null ? WindowStartupLocation.CenterOwner : WindowStartupLocation.CenterScreen,
 				ShowInTaskbar = owner == null, MaxWidth = 520 };
@@ -110,7 +113,7 @@ namespace Cerberus.App.Views
 
 		public static bool Confirm(Window owner, string strTitle, string strText, string strOk = "Continuer", bool bDanger = false)
 		{
-			return Show(owner, strTitle, strText, strOk, "Annuler", bDanger);
+			return Show(owner, strTitle, strText, strOk, L.T("Annuler"), bDanger);
 		}
 	}
 }

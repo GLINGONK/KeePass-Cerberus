@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -114,7 +114,7 @@ namespace Cerberus.App.Services
 			}
 			if(pgBin == null)
 			{
-				pgBin = new PwGroup(true, true, "Corbeille", PwIcon.TrashBin);
+				pgBin = new PwGroup(true, true, L.T("Corbeille"), PwIcon.TrashBin);
 				pgBin.EnableAutoType = false;
 				pgBin.EnableSearching = false;
 				pgBin.IsExpanded = false;
@@ -141,13 +141,13 @@ namespace Cerberus.App.Services
 		}
 
 		public static readonly Profile[] Profiles = new Profile[] {
-			new Profile { Name = "Compatible KeePass", Description = "AES-256 · Argon2id 64 Mio · s'ouvre aussi dans KeePass d'origine",
+			new Profile { Name = L.T("Compatible KeePass"), Description = L.T("AES-256 · Argon2id 64 Mio · s'ouvre aussi dans KeePass d'origine"),
 				Layers = null, MemoryMiB = 64, Iterations = 2, Parallelism = 2 },
-			new Profile { Name = "Interactif", Description = "AES-256 → ChaCha20 · Argon2id 256 Mio · ~0,5 s",
+			new Profile { Name = L.T("Interactif"), Description = L.T("AES-256 → ChaCha20 · Argon2id 256 Mio · ~0,5 s"),
 				Layers = CerberusCiphers.Recommended, MemoryMiB = 256, Iterations = 3, Parallelism = 4 },
-			new Profile { Name = "Renforcé (recommandé)", Description = "AES-256 → ChaCha20 · Argon2id 1 Gio · ~2 s",
+			new Profile { Name = L.T("Renforcé (recommandé)"), Description = L.T("AES-256 → ChaCha20 · Argon2id 1 Gio · ~2 s"),
 				Layers = CerberusCiphers.Recommended, MemoryMiB = 1024, Iterations = 4, Parallelism = 4 },
-			new Profile { Name = "Paranoïa", Description = "AES-256 → ChaCha20 → Serpent-256 · Argon2id 4 Gio · ~11 s, 6 Go de RAM libre",
+			new Profile { Name = L.T("Paranoïa"), Description = L.T("AES-256 → ChaCha20 → Serpent-256 · Argon2id 4 Gio · ~11 s, 6 Go de RAM libre"),
 				Layers = CerberusCiphers.Paranoid, MemoryMiB = 4096, Iterations = 8, Parallelism = 8 }
 		};
 
@@ -170,21 +170,21 @@ namespace Cerberus.App.Services
 		public static string CipherName(PwUuid pu)
 		{
 			ICipherEngine c = CipherPool.GlobalPool.GetCipher(pu);
-			return (c != null) ? c.DisplayName : "Inconnu";
+			return (c != null) ? c.DisplayName : L.T("Inconnu");
 		}
 
 		public static string DescribeKdf(KdfParameters p)
 		{
 			KdfEngine k = KdfPool.Get(p.KdfUuid);
-			if(k == null) return "Inconnue";
+			if(k == null) return L.T("Inconnue");
 			if(k is Argon2Kdf)
 			{
 				ulong m = p.GetUInt64(Argon2Kdf.ParamMemory, 0) / (1024UL * 1024UL);
-				return k.Name + " · " + (m >= 1024 ? (m / 1024).ToString() + " Gio" : m.ToString() + " Mio") +
-					" · " + p.GetUInt64(Argon2Kdf.ParamIterations, 0) + " passes · " +
+				return k.Name + " · " + (m >= 1024 ? (m / 1024).ToString() + L.T(" Gio") : m.ToString() + L.T(" Mio")) +
+					" · " + p.GetUInt64(Argon2Kdf.ParamIterations, 0) + L.T(" passes · ") +
 					p.GetUInt32(Argon2Kdf.ParamParallelism, 0) + " threads";
 			}
-			if(k is AesKdf) return "AES-KDF · " + p.GetUInt64(AesKdf.ParamRounds, 0).ToString("N0") + " tours";
+			if(k is AesKdf) return "AES-KDF · " + p.GetUInt64(AesKdf.ParamRounds, 0).ToString("N0") + L.T(" tours");
 			return k.Name;
 		}
 	}

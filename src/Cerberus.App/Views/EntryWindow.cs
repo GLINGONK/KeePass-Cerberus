@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -51,7 +51,7 @@ namespace Cerberus.App.Views
 		{
 			m_pe = pe; m_bNew = bNew;
 			IsDialog = true;
-			Title = bNew ? "Nouvelle entrée" : "Modifier l'entrée";
+			Title = bNew ? L.T("Nouvelle entrée") : L.T("Modifier l'entrée");
 			Width = 640; Height = 720; MinWidth = 520; MinHeight = 520;
 			WindowStartupLocation = WindowStartupLocation.CenterOwner;
 			ShowInTaskbar = false;
@@ -69,8 +69,8 @@ namespace Cerberus.App.Views
 
 			// Buttons
 			DockPanel bar = new DockPanel { Margin = new Thickness(26, 12, 26, 18), LastChildFill = false };
-			Button ok = new Button { Content = "Enregistrer", Style = (Style)FindResource("AccentButton"), MinWidth = 120, IsDefault = true };
-			Button cancel = new Button { Content = "Annuler", MinWidth = 96, Margin = new Thickness(0, 0, 8, 0), IsCancel = true };
+			Button ok = new Button { Content = L.T("Enregistrer"), Style = (Style)FindResource("AccentButton"), MinWidth = 120, IsDefault = true };
+			Button cancel = new Button { Content = L.T("Annuler"), MinWidth = 96, Margin = new Thickness(0, 0, 8, 0), IsCancel = true };
 			DockPanel.SetDock(ok, Dock.Right); DockPanel.SetDock(cancel, Dock.Right);
 			bar.Children.Add(CaptureCheckBox());
 			bar.Children.Add(ok); bar.Children.Add(cancel);
@@ -83,17 +83,17 @@ namespace Cerberus.App.Views
 
 			// ---- General
 			StackPanel gen = new StackPanel();
-			m_title = Field(gen, "Titre");
-			m_user = Field(gen, "Nom d'utilisateur");
-			gen.Children.Add(Label("Mot de passe"));
+			m_title = Field(gen, L.T("Titre"));
+			m_user = Field(gen, L.T("Nom d'utilisateur"));
+			gen.Children.Add(Label(L.T("Mot de passe")));
 			Grid pg = new Grid();
 			pg.ColumnDefinitions.Add(new ColumnDefinition());
 			pg.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 			pg.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 			m_pw = new PasswordBox();
 			m_pwPlain = new TextBox { Visibility = Visibility.Collapsed, FontFamily = new FontFamily("Consolas") };
-			m_tgPw = new ToggleButton { Style = (Style)FindResource("ToggleIcon"), Content = MakeIcon("IcEye"), Margin = new Thickness(6, 0, 0, 0), ToolTip = "Afficher / masquer", Focusable = false };
-			Button genPw = new Button { Style = (Style)FindResource("IconButton"), Content = MakeIcon("IcDice"), ToolTip = "Générer" };
+			m_tgPw = new ToggleButton { Style = (Style)FindResource("ToggleIcon"), Content = MakeIcon("IcEye"), Margin = new Thickness(6, 0, 0, 0), ToolTip = L.T("Afficher / masquer"), Focusable = false };
+			Button genPw = new Button { Style = (Style)FindResource("IconButton"), Content = MakeIcon("IcDice"), ToolTip = L.T("Générer") };
 			Grid.SetColumn(m_tgPw, 1); Grid.SetColumn(genPw, 2);
 			pg.Children.Add(m_pw); pg.Children.Add(m_pwPlain); pg.Children.Add(m_tgPw); pg.Children.Add(genPw);
 			gen.Children.Add(pg);
@@ -127,75 +127,75 @@ namespace Cerberus.App.Views
 			two.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(14) });
 			two.ColumnDefinitions.Add(new ColumnDefinition());
 			StackPanel c1 = new StackPanel(), c2 = new StackPanel();
-			c1.Children.Add(Label("Catégorie"));
+			c1.Children.Add(Label(L.T("Catégorie")));
 			m_cat = new ComboBox();
-			m_cat.Items.Add("(aucune)");
-			foreach(string n in Categories.Names) m_cat.Items.Add(n);
+			m_cat.Items.Add(L.T("(aucune)"));
+			foreach(string n in Categories.Names) m_cat.Items.Add(L.T(n));
 			c1.Children.Add(m_cat);
-			m_tags = Field(c2, "Tags (séparés par des virgules)");
+			m_tags = Field(c2, L.T("Tags (séparés par des virgules)"));
 			Grid.SetColumn(c2, 2);
 			two.Children.Add(c1); two.Children.Add(c2);
 			gen.Children.Add(two);
 
-			gen.Children.Add(Label("Notes"));
+			gen.Children.Add(Label(L.T("Notes")));
 			m_notes = new TextBox { Style = (Style)FindResource("MultilineBox"), Height = 110 };
 			gen.Children.Add(m_notes);
 
 			StackPanel ex = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 12, 0, 0) };
-			m_cbExpires = new CheckBox { Content = "Expire le", VerticalAlignment = VerticalAlignment.Center };
-			m_expiry = new TextBox { Width = 160, Margin = new Thickness(10, 0, 0, 0), ToolTip = "jj/mm/aaaa hh:mm" };
+			m_cbExpires = new CheckBox { Content = L.T("Expire le"), VerticalAlignment = VerticalAlignment.Center };
+			m_expiry = new TextBox { Width = 160, Margin = new Thickness(10, 0, 0, 0), ToolTip = L.T("jj/mm/aaaa hh:mm") };
 			ex.Children.Add(m_cbExpires); ex.Children.Add(m_expiry);
 			gen.Children.Add(ex);
-			tabs.Items.Add(new TabItem { Header = "Général", Content = Scroll(gen) });
+			tabs.Items.Add(new TabItem { Header = L.T("Général"), Content = Scroll(gen) });
 
 			// ---- Custom fields
 			DockPanel fd = new DockPanel();
 			StackPanel ft = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 8) };
-			Button addF = new Button { Content = IconText("IcAdd", "Ajouter un champ") };
+			Button addF = new Button { Content = IconText("IcAdd", L.T("Ajouter un champ")) };
 			ft.Children.Add(addF);
 			DockPanel.SetDock(ft, Dock.Top);
 			fd.Children.Add(ft);
 			m_lbFields = new ListBox { ItemsSource = m_fields };
 			m_lbFields.ItemTemplate = FieldTemplate();
 			fd.Children.Add(m_lbFields);
-			addF.Click += delegate { m_fields.Add(new FieldItem { Name = "Champ " + (m_fields.Count + 1), Value = "", Protected = false }); };
-			tabs.Items.Add(new TabItem { Header = "Champs", Content = fd });
+			addF.Click += delegate { m_fields.Add(new FieldItem { Name = L.T("Champ ") + (m_fields.Count + 1), Value = "", Protected = false }); };
+			tabs.Items.Add(new TabItem { Header = L.T("Champs"), Content = fd });
 
 			// ---- TOTP
 			StackPanel tp = new StackPanel();
-			tp.Children.Add(new TextBlock { Style = (Style)FindResource("Hint"), Text = "Secret Base32 ou URI otpauth:// (compatible KeePass et KeePassXC). Laissez vide pour désactiver." });
-			m_otp = Field(tp, "Secret TOTP");
+			tp.Children.Add(new TextBlock { Style = (Style)FindResource("Hint"), Text = L.T("Secret Base32 ou URI otpauth:// (compatible KeePass et KeePassXC). Laissez vide pour désactiver.") });
+			m_otp = Field(tp, L.T("Secret TOTP"));
 			tabs.Items.Add(new TabItem { Header = "TOTP", Content = tp });
 
 			// ---- Auto-type (KeePass syntax)
 			StackPanel atp = new StackPanel();
-			m_atEnabled = new CheckBox { Content = "Activer la saisie automatique pour cette entrée" };
+			m_atEnabled = new CheckBox { Content = L.T("Activer la saisie automatique pour cette entrée") };
 			atp.Children.Add(m_atEnabled);
-			m_atCustom = new CheckBox { Content = "Séquence personnalisée (sinon : celle du dossier, ou {USERNAME}{TAB}{PASSWORD}{ENTER})", Margin = new Thickness(0, 10, 0, 4) };
+			m_atCustom = new CheckBox { Content = L.T("Séquence personnalisée (sinon : celle du dossier, ou {USERNAME}{TAB}{PASSWORD}{ENTER})"), Margin = new Thickness(0, 10, 0, 4) };
 			atp.Children.Add(m_atCustom);
 			m_atSeq = new TextBox { FontFamily = new FontFamily("Consolas") };
 			atp.Children.Add(m_atSeq);
 			m_atCustom.Checked += delegate { m_atSeq.IsEnabled = true; };
 			m_atCustom.Unchecked += delegate { m_atSeq.IsEnabled = false; };
 			atp.Children.Add(new TextBlock { Style = (Style)FindResource("Hint"), Margin = new Thickness(0, 6, 0, 0),
-				Text = "Codes : {USERNAME} {PASSWORD} {TITLE} {URL} {NOTES} {S:Champ} {TOTP} · {TAB} {ENTER} {SPACE} {BS} {DEL} {ESC} {UP} {DOWN} {LEFT} {RIGHT} {HOME} {END} {F1}… · {TAB 3} = répéter · {DELAY 500} = pause (ms) · {DELAY=50} = délai entre touches · {CLEARFIELD} · + Maj, ^ Ctrl, % Alt · {+} {^} {%} {{} {}} = caractères." });
+				Text = L.T("Codes : {USERNAME} {PASSWORD} {TITLE} {URL} {NOTES} {S:Champ} {TOTP} · {TAB} {ENTER} {SPACE} {BS} {DEL} {ESC} {UP} {DOWN} {LEFT} {RIGHT} {HOME} {END} {F1}… · {TAB 3} = répéter · {DELAY 500} = pause (ms) · {DELAY=50} = délai entre touches · {CLEARFIELD} · + Maj, ^ Ctrl, % Alt · {+} {^} {%} {{} {}} = caractères.") });
 
-			atp.Children.Add(new TextBlock { Text = "ASSOCIATIONS DE FENÊTRES", Style = (Style)FindResource("Section") });
+			atp.Children.Add(new TextBlock { Text = L.T("ASSOCIATIONS DE FENÊTRES"), Style = (Style)FindResource("Section") });
 			atp.Children.Add(new TextBlock { Style = (Style)FindResource("Hint"),
-				Text = "Pour Ctrl+Alt+A : titre de fenêtre avec * comme joker (ex. *Banque*Connexion*) ou //expression régulière//. Séquence vide = séquence de l'entrée." });
-			Button addAssoc = new Button { Content = IconText("IcAdd", "Ajouter une association"), HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 8, 0, 6) };
+				Text = L.T("Pour Ctrl+Alt+A : titre de fenêtre avec * comme joker (ex. *Banque*Connexion*) ou //expression régulière//. Séquence vide = séquence de l'entrée.") });
+			Button addAssoc = new Button { Content = IconText("IcAdd", L.T("Ajouter une association")), HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 8, 0, 6) };
 			atp.Children.Add(addAssoc);
 			ListBox lbA = new ListBox { ItemsSource = m_assocs, ItemTemplate = AssocTemplate(), MinHeight = 120 };
 			atp.Children.Add(lbA);
 			addAssoc.Click += delegate { m_assocs.Add(new AssocItem { Window = "*" + m_title.Text + "*", Sequence = "" }); };
-			tabs.Items.Add(new TabItem { Header = "Saisie auto", Content = Scroll(atp) });
+			tabs.Items.Add(new TabItem { Header = L.T("Saisie auto"), Content = Scroll(atp) });
 
 			// ---- Attachments
 			DockPanel ad = new DockPanel();
 			StackPanel at = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 8) };
-			Button addA = new Button { Content = IconText("IcAttach", "Joindre un fichier"), Margin = new Thickness(0, 0, 8, 0) };
-			Button saveA = new Button { Content = IconText("IcSave", "Enregistrer sous…"), Margin = new Thickness(0, 0, 8, 0) };
-			Button delA = new Button { Content = IconText("IcTrash", "Retirer"), Style = (Style)FindResource("DangerButton") };
+			Button addA = new Button { Content = IconText("IcAttach", L.T("Joindre un fichier")), Margin = new Thickness(0, 0, 8, 0) };
+			Button saveA = new Button { Content = IconText("IcSave", L.T("Enregistrer sous…")), Margin = new Thickness(0, 0, 8, 0) };
+			Button delA = new Button { Content = IconText("IcTrash", L.T("Retirer")), Style = (Style)FindResource("DangerButton") };
 			at.Children.Add(addA); at.Children.Add(saveA); at.Children.Add(delA);
 			DockPanel.SetDock(at, Dock.Top);
 			ad.Children.Add(at);
@@ -204,7 +204,7 @@ namespace Cerberus.App.Views
 			addA.Click += delegate { AddAttachment(); };
 			saveA.Click += delegate { SaveAttachment(); };
 			delA.Click += delegate { if(m_lbBins.SelectedItem is string s) { m_bins.Remove(s); RefreshBins(); } };
-			tabs.Items.Add(new TabItem { Header = "Pièces jointes", Content = ad });
+			tabs.Items.Add(new TabItem { Header = L.T("Pièces jointes"), Content = ad });
 
 			// ---- History
 			if(!bNew && pe.History.UCount > 0)
@@ -212,7 +212,7 @@ namespace Cerberus.App.Views
 				ListBox lh = new ListBox();
 				foreach(PwEntry h in pe.History.Reverse())
 					lh.Items.Add(h.LastModificationTime.ToLocalTime().ToString("g", CultureInfo.CurrentCulture) + "  ·  " + h.Strings.ReadSafe(PwDefs.TitleField));
-				tabs.Items.Add(new TabItem { Header = "Historique (" + pe.History.UCount + ")", Content = lh });
+				tabs.Items.Add(new TabItem { Header = L.T("Historique (") + pe.History.UCount + ")", Content = lh });
 			}
 
 			Content = root;
@@ -251,10 +251,10 @@ namespace Cerberus.App.Views
 			val.SetValue(Grid.ColumnProperty, 1);
 			var prot = new FrameworkElementFactory(typeof(CheckBox));
 			prot.SetBinding(ToggleButton.IsCheckedProperty, new System.Windows.Data.Binding("Protected"));
-			prot.SetValue(ContentControl.ContentProperty, "Secret");
+			prot.SetValue(ContentControl.ContentProperty, L.T("Secret"));
 			prot.SetValue(Grid.ColumnProperty, 2);
 			prot.SetValue(MarginProperty, new Thickness(10, 0, 6, 0));
-			prot.SetValue(ToolTipProperty, "Masqué, protégé en mémoire, exclu de la recherche");
+			prot.SetValue(ToolTipProperty, L.T("Masqué, protégé en mémoire, exclu de la recherche"));
 			var del = new FrameworkElementFactory(typeof(Button));
 			del.SetValue(Grid.ColumnProperty, 3);
 			del.SetValue(ContentControl.ContentProperty, "✕");
@@ -277,11 +277,11 @@ namespace Cerberus.App.Views
 			var win = new FrameworkElementFactory(typeof(TextBox));
 			win.SetBinding(TextBox.TextProperty, new System.Windows.Data.Binding("Window") { UpdateSourceTrigger = System.Windows.Data.UpdateSourceTrigger.PropertyChanged });
 			win.SetValue(MarginProperty, new Thickness(0, 0, 8, 0));
-			win.SetValue(ToolTipProperty, "Titre de fenêtre (* = joker)");
+			win.SetValue(ToolTipProperty, L.T("Titre de fenêtre (* = joker)"));
 			var seq = new FrameworkElementFactory(typeof(TextBox));
 			seq.SetBinding(TextBox.TextProperty, new System.Windows.Data.Binding("Sequence") { UpdateSourceTrigger = System.Windows.Data.UpdateSourceTrigger.PropertyChanged });
 			seq.SetValue(Grid.ColumnProperty, 1);
-			seq.SetValue(ToolTipProperty, "Séquence (vide = séquence de l'entrée)");
+			seq.SetValue(ToolTipProperty, L.T("Séquence (vide = séquence de l'entrée)"));
 			var del = new FrameworkElementFactory(typeof(Button));
 			del.SetValue(Grid.ColumnProperty, 2);
 			del.SetValue(ContentControl.ContentProperty, "✕");
@@ -301,7 +301,7 @@ namespace Cerberus.App.Views
 			Array.Clear(v, 0, v.Length);
 			m_quality.Value = Math.Min(bits, 128);
 			m_quality.SetResourceReference(ForegroundProperty, bits < 50 ? "Danger" : bits < 80 ? "Warning" : "Success");
-			m_qualityText.Text = bits + " bits · " + PasswordGen.Label(bits);
+			m_qualityText.Text = bits + L.T(" bits · ") + PasswordGen.Label(bits);
 		}
 
 		private void LoadEntry()
@@ -346,7 +346,7 @@ namespace Cerberus.App.Views
 
 		private void AddAttachment()
 		{
-			var ofd = new Microsoft.Win32.OpenFileDialog { Multiselect = true, Title = "Joindre des fichiers" };
+			var ofd = new Microsoft.Win32.OpenFileDialog { Multiselect = true, Title = L.T("Joindre des fichiers") };
 			if(ofd.ShowDialog(this) != true) return;
 			foreach(string f in ofd.FileNames)
 			{
@@ -356,7 +356,7 @@ namespace Cerberus.App.Views
 					m_bins[Path.GetFileName(f)] = new ProtectedBinary(true, pb);
 					KeePassLib.Utility.MemUtil.ZeroByteArray(pb);
 				}
-				catch(Exception ex) { Dialog.Error(this, "Pièce jointe", ex.Message); }
+				catch(Exception ex) { Dialog.Error(this, L.T("Pièce jointe"), ex.Message); }
 			}
 			RefreshBins();
 		}
@@ -372,7 +372,7 @@ namespace Cerberus.App.Views
 				File.WriteAllBytes(sfd.FileName, pb);
 				KeePassLib.Utility.MemUtil.ZeroByteArray(pb);
 			}
-			catch(Exception ex) { Dialog.Error(this, "Pièce jointe", ex.Message); }
+			catch(Exception ex) { Dialog.Error(this, L.T("Pièce jointe"), ex.Message); }
 		}
 
 		private bool SaveEntry()
@@ -385,7 +385,7 @@ namespace Cerberus.App.Views
 			{
 				if(!DateTime.TryParseExact(m_expiry.Text.Trim(), new[] { "dd/MM/yyyy HH:mm", "dd/MM/yyyy" },
 					CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out dtExp))
-				{ Dialog.Info(this, "Expiration", "Date invalide (format jj/mm/aaaa hh:mm)."); return false; }
+				{ Dialog.Info(this, L.T("Expiration"), L.T("Date invalide (format jj/mm/aaaa hh:mm).")); return false; }
 				dtExp = dtExp.ToUniversalTime();
 			}
 
@@ -394,7 +394,7 @@ namespace Cerberus.App.Views
 			{
 				string n = (f.Name ?? "").Trim();
 				if(n.Length == 0 || PwDefs.IsStandardField(n) || !names.Add(n))
-				{ Dialog.Info(this, "Champs", "Nom de champ vide, réservé ou en double : « " + n + " »."); return false; }
+				{ Dialog.Info(this, L.T("Champs"), L.T("Nom de champ vide, réservé ou en double : « ") + n + " »."); return false; }
 			}
 
 			if(!m_bNew) m_pe.CreateBackup(db);
@@ -424,7 +424,7 @@ namespace Cerberus.App.Views
 			var tags = m_tags.Text.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(t => t.Trim()).Where(t => t.Length > 0).ToList();
 			m_pe.Tags.Clear();
 			foreach(string t in tags) m_pe.AddTag(t);
-			Categories.Set(m_pe, m_cat.SelectedIndex > 0 ? (string)m_cat.SelectedItem : null);
+			Categories.Set(m_pe, m_cat.SelectedIndex > 0 ? Categories.Names[m_cat.SelectedIndex - 1] : null);
 
 			m_pe.AutoType.Enabled = m_atEnabled.IsChecked == true;
 			m_pe.AutoType.DefaultSequence = (m_atCustom.IsChecked == true) ? m_atSeq.Text.Trim() : string.Empty;

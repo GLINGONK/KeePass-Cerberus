@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -21,7 +21,7 @@ namespace Cerberus.App.Views
 		public GeneratorWindow(bool bSelectable)
 		{
 			IsDialog = true;
-			Title = "Générateur de mots de passe";
+			Title = L.T("Générateur de mots de passe");
 			Width = 520; SizeToContent = SizeToContent.Height;
 			ResizeMode = ResizeMode.NoResize;
 			WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -29,16 +29,16 @@ namespace Cerberus.App.Views
 			Settings st = Settings.Current;
 
 			StackPanel root = new StackPanel { Margin = new Thickness(26, 22, 26, 22) };
-			root.Children.Add(new TextBlock { Text = "Générateur", Style = (Style)FindResource("Title") });
-			root.Children.Add(new TextBlock { Text = "Tirage uniforme avec le générateur cryptographique de KeePass.", Style = (Style)FindResource("Subtitle"), Margin = new Thickness(0, 4, 0, 14) });
+			root.Children.Add(new TextBlock { Text = L.T("Générateur"), Style = (Style)FindResource("Title") });
+			root.Children.Add(new TextBlock { Text = L.T("Tirage uniforme avec le générateur cryptographique de KeePass."), Style = (Style)FindResource("Subtitle"), Margin = new Thickness(0, 4, 0, 14) });
 
 			Grid g = new Grid();
 			g.ColumnDefinitions.Add(new ColumnDefinition());
 			g.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 			g.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 			m_out = new TextBox { FontFamily = new FontFamily("Consolas"), FontSize = 17, MinHeight = 46, IsReadOnly = true };
-			Button again = new Button { Style = (Style)FindResource("IconButton"), Content = MakeIcon("IcDice", 18), ToolTip = "Regénérer", Margin = new Thickness(6, 0, 0, 0), Width = 44, Height = 44 };
-			Button copy = new Button { Style = (Style)FindResource("IconButton"), Content = MakeIcon("IcCopy", 18), ToolTip = "Copier", Width = 44, Height = 44 };
+			Button again = new Button { Style = (Style)FindResource("IconButton"), Content = MakeIcon("IcDice", 18), ToolTip = L.T("Regénérer"), Margin = new Thickness(6, 0, 0, 0), Width = 44, Height = 44 };
+			Button copy = new Button { Style = (Style)FindResource("IconButton"), Content = MakeIcon("IcCopy", 18), ToolTip = L.T("Copier"), Width = 44, Height = 44 };
 			Grid.SetColumn(again, 1); Grid.SetColumn(copy, 2);
 			g.Children.Add(m_out); g.Children.Add(again); g.Children.Add(copy);
 			root.Children.Add(g);
@@ -53,7 +53,7 @@ namespace Cerberus.App.Views
 			e.Children.Add(m_bar); e.Children.Add(m_entropy);
 			root.Children.Add(e);
 
-			root.Children.Add(new TextBlock { Text = "LONGUEUR", Style = (Style)FindResource("Section") });
+			root.Children.Add(new TextBlock { Text = L.T("LONGUEUR"), Style = (Style)FindResource("Section") });
 			Grid lg = new Grid();
 			lg.ColumnDefinitions.Add(new ColumnDefinition());
 			lg.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(44) });
@@ -63,25 +63,25 @@ namespace Cerberus.App.Views
 			lg.Children.Add(m_len); lg.Children.Add(m_lenText);
 			root.Children.Add(lg);
 
-			root.Children.Add(new TextBlock { Text = "CARACTÈRES", Style = (Style)FindResource("Section") });
+			root.Children.Add(new TextBlock { Text = L.T("CARACTÈRES"), Style = (Style)FindResource("Section") });
 			WrapPanel wp = new WrapPanel();
 			m_u = Chk(wp, "A–Z", st.GenUpper); m_l = Chk(wp, "a–z", st.GenLower); m_d = Chk(wp, "0–9", st.GenDigits); m_s = Chk(wp, "!#$%…", st.GenSymbols);
 			root.Children.Add(wp);
-			m_amb = new CheckBox { Content = "Exclure les caractères ambigus (I l 1 O 0…)", IsChecked = st.GenExcludeAmbiguous };
+			m_amb = new CheckBox { Content = L.T("Exclure les caractères ambigus (I l 1 O 0…)"), IsChecked = st.GenExcludeAmbiguous };
 			root.Children.Add(m_amb);
 
 			DockPanel bar = new DockPanel { Margin = new Thickness(0, 20, 0, 0), LastChildFill = false };
 			if(bSelectable)
 			{
-				Button use = new Button { Content = "Utiliser", Style = (Style)FindResource("AccentButton"), MinWidth = 110, IsDefault = true };
-				Button cancel = new Button { Content = "Annuler", MinWidth = 96, Margin = new Thickness(0, 0, 8, 0), IsCancel = true };
+				Button use = new Button { Content = L.T("Utiliser"), Style = (Style)FindResource("AccentButton"), MinWidth = 110, IsDefault = true };
+				Button cancel = new Button { Content = L.T("Annuler"), MinWidth = 96, Margin = new Thickness(0, 0, 8, 0), IsCancel = true };
 				DockPanel.SetDock(use, Dock.Right); DockPanel.SetDock(cancel, Dock.Right);
 				bar.Children.Add(use); bar.Children.Add(cancel);
 				use.Click += delegate { Result = (char[])m_cur.Clone(); Save(); DialogResult = true; };
 			}
 			else
 			{
-				Button close = new Button { Content = "Fermer", MinWidth = 96, IsCancel = true };
+				Button close = new Button { Content = L.T("Fermer"), MinWidth = 96, IsCancel = true };
 				DockPanel.SetDock(close, Dock.Right);
 				bar.Children.Add(close);
 				close.Click += delegate { Save(); Close(); };
@@ -117,7 +117,7 @@ namespace Cerberus.App.Views
 			double bits = PasswordGen.Entropy(n, PasswordGen.Alphabet(u, l, d, s, amb).Length);
 			m_bar.Value = Math.Min(bits, 160);
 			m_bar.SetResourceReference(ForegroundProperty, bits < 50 ? "Danger" : bits < 80 ? "Warning" : "Success");
-			m_entropy.Text = ((int)bits) + " bits d'entropie";
+			m_entropy.Text = ((int)bits) + L.T(" bits d'entropie");
 		}
 
 		private void Save()

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -108,7 +108,7 @@ namespace Cerberus.App.Views
 			PasswordBox pb = new PasswordBox { FontSize = 15, MinHeight = 40 };
 			TextBox plain = new TextBox { FontSize = 15, MinHeight = 40, Visibility = Visibility.Collapsed, FontFamily = new FontFamily("Consolas") };
 			ToggleButton tg = new ToggleButton { Style = (Style)FindResource("ToggleIcon"), Content = MakeIcon("IcEye", 18), Margin = new Thickness(6, 0, 0, 0),
-				Width = 40, Height = 40, ToolTip = "Afficher / masquer", Focusable = false };
+				Width = 40, Height = 40, ToolTip = L.T("Afficher / masquer"), Focusable = false };
 			tg.Checked += delegate { plain.Text = pb.Password; plain.Visibility = Visibility.Visible; pb.Visibility = Visibility.Collapsed; };
 			tg.Unchecked += delegate { pb.Password = plain.Text; plain.Text = ""; plain.Visibility = Visibility.Collapsed; pb.Visibility = Visibility.Visible; };
 			Grid.SetColumn(tg, 1);
@@ -151,7 +151,7 @@ namespace Cerberus.App.Views
 		protected Button AddButtons(string strOk, out Button cancel)
 		{
 			Button ok = new Button { Content = strOk, Style = (Style)FindResource("AccentButton"), MinWidth = 130, IsDefault = true };
-			cancel = new Button { Content = "Annuler", MinWidth = 96, Margin = new Thickness(0, 0, 8, 0), IsCancel = true };
+			cancel = new Button { Content = L.T("Annuler"), MinWidth = 96, Margin = new Thickness(0, 0, 8, 0), IsCancel = true };
 			DockPanel.SetDock(ok, Dock.Right); DockPanel.SetDock(cancel, Dock.Right);
 			Bar.Children.Add(ok); Bar.Children.Add(cancel);
 			return ok;
@@ -159,8 +159,8 @@ namespace Cerberus.App.Views
 
 		protected static string BrowseKeyFile(Window owner, string strCur)
 		{
-			var ofd = new Microsoft.Win32.OpenFileDialog { Title = "Choisir le fichier clé",
-				Filter = "Fichiers clés (*.keyx;*.key)|*.keyx;*.key|Tous les fichiers (*.*)|*.*", CheckFileExists = true };
+			var ofd = new Microsoft.Win32.OpenFileDialog { Title = L.T("Choisir le fichier clé"),
+				Filter = L.T("Fichiers clés (*.keyx;*.key)|*.keyx;*.key|Tous les fichiers (*.*)|*.*"), CheckFileExists = true };
 			try { if(!string.IsNullOrEmpty(strCur)) ofd.InitialDirectory = Path.GetDirectoryName(strCur); } catch(Exception) { }
 			return ofd.ShowDialog(owner) == true ? ofd.FileName : null;
 		}
@@ -191,13 +191,13 @@ namespace Cerberus.App.Views
 		public PwDatabase Result { get; private set; }
 
 		public UnlockWindow(string strPath)
-			: base("Déverrouiller la base", strPath, "IcLock")
+			: base(L.T("Déverrouiller la base"), strPath, "IcLock")
 		{
 			m_strPath = strPath;
 			m_assoc = Settings.Current.GetKeyAssoc(strPath);
 
 			// Explicit, never ticked automatically; remembered per database.
-			m_cbPw = Option("Mot de passe maître", m_assoc == null || m_assoc.UsePassword);
+			m_cbPw = Option(L.T("Mot de passe maître"), m_assoc == null || m_assoc.UsePassword);
 			m_cbPw.FontWeight = FontWeights.SemiBold;
 			m_cbPw.Margin = new Thickness(0, 14, 0, 6);
 			m_pw = PasswordRow(out m_tgPw, out m_pwPlain);
@@ -205,24 +205,24 @@ namespace Cerberus.App.Views
 			m_cbPw.Checked += delegate { syncPw(); };
 			m_cbPw.Unchecked += delegate { syncPw(); };
 			syncPw();
-			m_caps = new TextBlock { Text = "Verr. Maj est activé", Margin = new Thickness(2, 6, 0, 0), Visibility = Visibility.Collapsed };
+			m_caps = new TextBlock { Text = L.T("Verr. Maj est activé"), Margin = new Thickness(2, 6, 0, 0), Visibility = Visibility.Collapsed };
 			m_caps.SetResourceReference(TextBlock.ForegroundProperty, "Warning");
 			Body.Children.Add(m_caps);
 
-			Section("Autres éléments de la clé");
-			m_cbKey = Option("Fichier clé", m_assoc != null && !string.IsNullOrEmpty(m_assoc.KeyFilePath));
-			Button browse = new Button { Content = "Parcourir…" };
+			Section(L.T("Autres éléments de la clé"));
+			m_cbKey = Option(L.T("Fichier clé"), m_assoc != null && !string.IsNullOrEmpty(m_assoc.KeyFilePath));
+			Button browse = new Button { Content = L.T("Parcourir…") };
 			m_tbKey = FileRow(browse);
 			m_tbKey.Text = m_assoc?.KeyFilePath ?? "";
 			browse.Click += delegate { string s = BrowseKeyFile(this, m_tbKey.Text); if(s != null) m_tbKey.Text = s; };
-			m_cbFactors = Option("Facteurs Cerberus (PIN / motif / Shamir)", m_assoc != null && m_assoc.CerberusFactors);
-			m_cbAccount = Option("Compte utilisateur Windows", m_assoc != null && m_assoc.WindowsAccount);
+			m_cbFactors = Option(L.T("Facteurs Cerberus (PIN / motif / Shamir)"), m_assoc != null && m_assoc.CerberusFactors);
+			m_cbAccount = Option(L.T("Compte utilisateur Windows"), m_assoc != null && m_assoc.WindowsAccount);
 
 			m_error = new TextBlock { Margin = new Thickness(0, 14, 0, 0), TextWrapping = TextWrapping.Wrap, Visibility = Visibility.Collapsed };
 			m_error.SetResourceReference(TextBlock.ForegroundProperty, "Danger");
 			Body.Children.Add(m_error);
 
-			Button ok = AddButtons("Déverrouiller", out _);
+			Button ok = AddButtons(L.T("Déverrouiller"), out _);
 			ok.Click += OnUnlock;
 
 			PreviewKeyDown += delegate { UpdateCaps(); };
@@ -242,8 +242,8 @@ namespace Cerberus.App.Views
 			string strKey = (m_cbKey.IsChecked == true) ? m_tbKey.Text.Trim() : "";
 			try
 			{
-				if(m_cbKey.IsChecked == true && strKey.Length == 0) { ShowError("Choisissez le fichier clé, ou décochez cette option."); return; }
-				if(strKey.Length > 0 && !File.Exists(strKey)) { ShowError("Fichier clé introuvable : " + strKey); return; }
+				if(m_cbKey.IsChecked == true && strKey.Length == 0) { ShowError(L.T("Choisissez le fichier clé, ou décochez cette option.")); return; }
+				if(strKey.Length > 0 && !File.Exists(strKey)) { ShowError(L.T("Fichier clé introuvable : ") + strKey); return; }
 
 				string flags = null; int grid = 3;
 				if(m_cbFactors.IsChecked == true)
@@ -256,7 +256,7 @@ namespace Cerberus.App.Views
 				bool bUsePw = m_cbPw.IsChecked == true;
 				bool bAccount = m_cbAccount.IsChecked == true;
 				bool bOther = strKey.Length > 0 || pbFactors != null || bAccount;
-				if(!bUsePw && !bOther) { ShowError("Choisissez au moins un élément de clé."); return; }
+				if(!bUsePw && !bOther) { ShowError(L.T("Choisissez au moins un élément de clé.")); return; }
 
 				// Candidate keys. KeePass distinguishes "empty password" from "no password":
 				// with the box ticked and an empty field, try both (old bases may use either).
@@ -269,7 +269,7 @@ namespace Cerberus.App.Views
 				}
 				catch(Exception ex) { ShowError(ex.Message); return; }
 
-				Busy("Déchiffrement en cours…");
+				Busy(L.T("Déchiffrement en cours…"));
 				IsEnabled = false;
 				Exception exLast = null;
 				foreach(var cand in candidates)
@@ -290,7 +290,7 @@ namespace Cerberus.App.Views
 					{
 						exLast = ex;
 						if(!(ex is KeePassLib.Keys.InvalidCompositeKeyException)) break;
-						if(candidates.Count > 1) Busy("Seconde tentative (sans mot de passe vide)…");
+						if(candidates.Count > 1) Busy(L.T("Seconde tentative (sans mot de passe vide)…"));
 					}
 				}
 				try { throw exLast; }
@@ -299,7 +299,7 @@ namespace Cerberus.App.Views
 					Busy(null);
 					IsEnabled = true;
 					bool bKey = ex is KeePassLib.Keys.InvalidCompositeKeyException;
-					ShowError(bKey ? "Clé incorrecte : vérifiez le mot de passe et les autres éléments." : ex.Message);
+					ShowError(bKey ? L.T("Clé incorrecte : vérifiez le mot de passe et les autres éléments.") : ex.Message);
 					m_pw.Focus();
 					m_pw.SelectAll();
 				}
@@ -334,16 +334,16 @@ namespace Cerberus.App.Views
 		public Session.Profile ResultProfile { get; private set; }
 
 		public CreateKeyWindow(string strPath, bool bNewDatabase)
-			: base(bNewDatabase ? "Protéger la nouvelle base" : "Changer la clé maître", strPath, "IcShield")
+			: base(bNewDatabase ? L.T("Protéger la nouvelle base") : L.T("Changer la clé maître"), strPath, "IcShield")
 		{
 			m_strPath = strPath;
 
-			Hint("Choisissez un ou plusieurs éléments : tous seront exigés à chaque ouverture.", new Thickness(0, 12, 0, 0));
+			Hint(L.T("Choisissez un ou plusieurs éléments : tous seront exigés à chaque ouverture."), new Thickness(0, 12, 0, 0));
 
-			m_cbPw = Option("Mot de passe maître", true);
+			m_cbPw = Option(L.T("Mot de passe maître"), true);
 			m_cbPw.FontWeight = FontWeights.SemiBold;
 			m_pw = PasswordRow(out m_tgPw, out m_pwPlain);
-			Body.Children.Add(new TextBlock { Text = "Confirmation", Style = (Style)FindResource("FieldLabel") });
+			Body.Children.Add(new TextBlock { Text = L.T("Confirmation"), Style = (Style)FindResource("FieldLabel") });
 			m_pw2 = PasswordRow(out m_tg2, out m_plain2);
 			m_tg2.Visibility = Visibility.Hidden;
 			m_tgPw.Checked += delegate { m_pw2.IsEnabled = false; };
@@ -358,7 +358,7 @@ namespace Cerberus.App.Views
 			Grid.SetColumn(m_qualityText, 1);
 			q.Children.Add(m_quality); q.Children.Add(m_qualityText);
 			Body.Children.Add(q);
-			Button gen = new Button { Content = IconText("IcDice", "Générer un mot de passe"), Style = (Style)FindResource("GhostButton"),
+			Button gen = new Button { Content = IconText("IcDice", L.T("Générer un mot de passe")), Style = (Style)FindResource("GhostButton"),
 				HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(-8, 6, 0, 0) };
 			gen.Click += delegate
 			{
@@ -377,21 +377,21 @@ namespace Cerberus.App.Views
 			m_cbPw.Unchecked += delegate { m_pw.IsEnabled = m_pw2.IsEnabled = m_tgPw.IsEnabled = false; };
 			UpdateQuality();
 
-			Section("Éléments supplémentaires");
-			m_cbKey = Option("Fichier clé", false);
-			Button create = new Button { Content = "Créer…" }, browse = new Button { Content = "Parcourir…" };
+			Section(L.T("Éléments supplémentaires"));
+			m_cbKey = Option(L.T("Fichier clé"), false);
+			Button create = new Button { Content = L.T("Créer…") }, browse = new Button { Content = L.T("Parcourir…") };
 			m_tbKey = FileRow(create, browse);
 			browse.Click += delegate { string s = BrowseKeyFile(this, m_tbKey.Text); if(s != null) m_tbKey.Text = s; };
 			create.Click += delegate { CreateKeyFile(); };
-			Hint("Gardez une copie de sauvegarde du fichier clé : sans lui, la base est irrécupérable.");
-			m_cbFactors = Option("Facteurs Cerberus (PIN / motif / Shamir)", false);
-			Hint("Configurés à l'étape suivante.");
-			m_cbAccount = Option("Compte utilisateur Windows", false);
-			Hint("Lie la base à ce compte Windows : une réinstallation de Windows la rend illisible.");
+			Hint(L.T("Gardez une copie de sauvegarde du fichier clé : sans lui, la base est irrécupérable."));
+			m_cbFactors = Option(L.T("Facteurs Cerberus (PIN / motif / Shamir)"), false);
+			Hint(L.T("Configurés à l'étape suivante."));
+			m_cbAccount = Option(L.T("Compte utilisateur Windows"), false);
+			Hint(L.T("Lie la base à ce compte Windows : une réinstallation de Windows la rend illisible."));
 
 			if(bNewDatabase)
 			{
-				Section("Profil de sécurité");
+				Section(L.T("Profil de sécurité"));
 				m_profile = new ComboBox();
 				foreach(var p in Session.Profiles) m_profile.Items.Add(p);
 				m_profile.SelectedIndex = 2; // Renforcé
@@ -401,7 +401,7 @@ namespace Cerberus.App.Views
 				desc.Text = Session.Profiles[2].Description;
 			}
 
-			Button ok = AddButtons(bNewDatabase ? "Créer la base" : "Enregistrer", out _);
+			Button ok = AddButtons(bNewDatabase ? L.T("Créer la base") : L.T("Enregistrer"), out _);
 			ok.Click += OnOK;
 			Loaded += delegate { m_pw.Focus(); };
 		}
@@ -414,12 +414,12 @@ namespace Cerberus.App.Views
 			m_quality.Value = Math.Min(bits, 128);
 			string col = bits < 50 ? "Danger" : bits < 80 ? "Warning" : "Success";
 			m_quality.SetResourceReference(ForegroundProperty, col);
-			m_qualityText.Text = bits + " bits · " + PasswordGen.Label(bits);
+			m_qualityText.Text = bits + L.T(" bits · ") + PasswordGen.Label(bits);
 		}
 
 		private void CreateKeyFile()
 		{
-			var sfd = new Microsoft.Win32.SaveFileDialog { Title = "Créer un fichier clé", Filter = "Fichier clé (*.keyx)|*.keyx",
+			var sfd = new Microsoft.Win32.SaveFileDialog { Title = L.T("Créer un fichier clé"), Filter = L.T("Fichier clé (*.keyx)|*.keyx"),
 				FileName = Path.GetFileNameWithoutExtension(m_strPath ?? "base") + ".keyx" };
 			if(sfd.ShowDialog(this) != true) return;
 			try
@@ -427,16 +427,16 @@ namespace Cerberus.App.Views
 				KcpKeyFile.Create(sfd.FileName, CryptoRandom.Instance.GetRandomBytes(64));
 				m_tbKey.Text = sfd.FileName;
 			}
-			catch(Exception ex) { Dialog.Error(this, "Fichier clé", ex.Message); }
+			catch(Exception ex) { Dialog.Error(this, L.T("Fichier clé"), ex.Message); }
 		}
 
 		private void OnOK(object sender, RoutedEventArgs e)
 		{
 			bool bPw = m_cbPw.IsChecked == true;
 			string strKey = (m_cbKey.IsChecked == true) ? m_tbKey.Text.Trim() : "";
-			if(m_cbKey.IsChecked == true && strKey.Length == 0) { Dialog.Info(this, "Fichier clé", "Choisissez ou créez un fichier clé, ou décochez cette option."); return; }
+			if(m_cbKey.IsChecked == true && strKey.Length == 0) { Dialog.Info(this, L.T("Fichier clé"), L.T("Choisissez ou créez un fichier clé, ou décochez cette option.")); return; }
 			if(!bPw && strKey.Length == 0 && m_cbFactors.IsChecked != true && m_cbAccount.IsChecked != true)
-			{ Dialog.Info(this, "Clé maître", "Choisissez au moins un élément de clé."); return; }
+			{ Dialog.Info(this, L.T("Clé maître"), L.T("Choisissez au moins un élément de clé.")); return; }
 
 			byte[] pb = null, pbFactors = null;
 			try
@@ -449,13 +449,13 @@ namespace Cerberus.App.Views
 						byte[] pb2 = Secure.Utf8(m_pw2.SecurePassword);
 						bool eq = MemUtil.ArraysEqual(pb, pb2);
 						MemUtil.ZeroByteArray(pb2);
-						if(!eq) { Dialog.Info(this, "Mot de passe", "Les deux mots de passe ne correspondent pas."); return; }
+						if(!eq) { Dialog.Info(this, L.T("Mot de passe"), L.T("Les deux mots de passe ne correspondent pas.")); return; }
 					}
-					if(pb.Length == 0 && !Dialog.Confirm(this, "Mot de passe vide",
-						"Le mot de passe maître est vide. Continuer quand même ?", "Continuer", true)) return;
+					if(pb.Length == 0 && !Dialog.Confirm(this, L.T("Mot de passe vide"),
+						L.T("Le mot de passe maître est vide. Continuer quand même ?"), L.T("Continuer"), true)) return;
 					uint bits = QualityEstimation.EstimatePasswordBits(pb);
-					if(pb.Length > 0 && bits < 50 && !Dialog.Confirm(this, "Mot de passe faible",
-						"Ce mot de passe est faible (" + bits + " bits). Il peut être deviné. Continuer quand même ?", "Continuer", true)) return;
+					if(pb.Length > 0 && bits < 50 && !Dialog.Confirm(this, L.T("Mot de passe faible"),
+						L.T("Ce mot de passe est faible (") + bits + L.T(" bits). Il peut être deviné. Continuer quand même ?"), L.T("Continuer"), true)) return;
 				}
 
 				string flags = null; int grid = 3;
@@ -473,7 +473,7 @@ namespace Cerberus.App.Views
 				Settings.Save();
 				DialogResult = true;
 			}
-			catch(Exception ex) { Dialog.Error(this, "Clé maître", ex.Message); }
+			catch(Exception ex) { Dialog.Error(this, L.T("Clé maître"), ex.Message); }
 			finally
 			{
 				if(pb != null) MemUtil.ZeroByteArray(pb);

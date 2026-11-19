@@ -2,7 +2,7 @@
 ; Build: ISCC.exe installer\KeePassCerberus.iss  (output: distrib\installer)
 
 #define AppName "KeePass Cerberus"
-#define AppVersion "1.0.0"
+#define AppVersion "1.0.1"
 #define AppExe "KeePassCerberus.exe"
 #define SrcDir "..\distrib\app"
 
@@ -37,6 +37,12 @@ CloseApplications=yes
 [Languages]
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "german"; MessagesFile: "compiler:LanguagesGerman.isl"
+Name: "spanish"; MessagesFile: "compiler:LanguagesSpanish.isl"
+Name: "italian"; MessagesFile: "compiler:LanguagesItalian.isl"
+Name: "portuguese"; MessagesFile: "compiler:LanguagesPortuguese.isl"
+Name: "dutch"; MessagesFile: "compiler:LanguagesDutch.isl"
+Name: "polish"; MessagesFile: "compiler:LanguagesPolish.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"

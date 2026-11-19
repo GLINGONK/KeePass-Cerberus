@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -88,9 +88,9 @@ namespace Cerberus.App.Views
 
 			StackPanel right = new StackPanel { Orientation = Orientation.Horizontal };
 			DockPanel.SetDock(right, Dock.Right);
-			right.Children.Add(TbButton("IcDice", "Générateur de mots de passe", delegate { new GeneratorWindow(false) { Owner = this }.ShowDialog(); }, false));
-			right.Children.Add(TbButton("IcSave", "Enregistrer (Ctrl+S)", async delegate { await SaveAsync(); }, true));
-			m_btnLock = TbButton("IcLock", "Verrouiller (Ctrl+L)", async delegate { await LockAsync(); }, true);
+			right.Children.Add(TbButton("IcDice", L.T("Générateur de mots de passe"), delegate { new GeneratorWindow(false) { Owner = this }.ShowDialog(); }, false));
+			right.Children.Add(TbButton("IcSave", L.T("Enregistrer (Ctrl+S)"), async delegate { await SaveAsync(); }, true));
+			m_btnLock = TbButton("IcLock", L.T("Verrouiller (Ctrl+L)"), async delegate { await LockAsync(); }, true);
 			right.Children.Add(m_btnLock);
 			Button more = TbButton("IcMore", "Menu", null, false);
 			more.Click += delegate { BuildMenu().IsOpen = true; };
@@ -99,21 +99,21 @@ namespace Cerberus.App.Views
 
 			StackPanel left = new StackPanel { Orientation = Orientation.Horizontal };
 			DockPanel.SetDock(left, Dock.Left);
-			Button add = new Button { Content = IconText("IcAdd", "Nouvelle entrée"), Style = (Style)FindResource("AccentButton"), Margin = new Thickness(0, 0, 10, 0), ToolTip = "Ctrl+N" };
+			Button add = new Button { Content = IconText("IcAdd", L.T("Nouvelle entrée")), Style = (Style)FindResource("AccentButton"), Margin = new Thickness(0, 0, 10, 0), ToolTip = "Ctrl+N" };
 			add.Click += delegate { NewEntry(); };
 			m_dbOnly.Add(add);
 			left.Children.Add(add);
-			left.Children.Add(TbButton("IcUser", "Copier le nom d'utilisateur (Ctrl+B)", delegate { CopyField(PwDefs.UserNameField); }, true));
-			left.Children.Add(TbButton("IcKey", "Copier le mot de passe (Ctrl+C)", delegate { CopyField(PwDefs.PasswordField); }, true));
-			left.Children.Add(TbButton("IcGlobe", "Ouvrir l'URL (Ctrl+U)", delegate { OpenUrl(); }, true));
-			left.Children.Add(TbButton("IcType", "Saisie automatique dans la fenêtre précédente (Ctrl+V)\nRaccourci global : Ctrl+Alt+A", async delegate { await AutoTypeSelectedAsync(); }, true));
+			left.Children.Add(TbButton("IcUser", L.T("Copier le nom d'utilisateur (Ctrl+B)"), delegate { CopyField(PwDefs.UserNameField); }, true));
+			left.Children.Add(TbButton("IcKey", L.T("Copier le mot de passe (Ctrl+C)"), delegate { CopyField(PwDefs.PasswordField); }, true));
+			left.Children.Add(TbButton("IcGlobe", L.T("Ouvrir l'URL (Ctrl+U)"), delegate { OpenUrl(); }, true));
+			left.Children.Add(TbButton("IcType", L.T("Saisie automatique dans la fenêtre précédente (Ctrl+V)") + "\n" + L.T("Raccourci global : Ctrl+Alt+A"), async delegate { await AutoTypeSelectedAsync(); }, true));
 			bar.Children.Add(left);
 
 			Grid sg = new Grid { Margin = new Thickness(12, 0, 12, 0), MaxWidth = 520, HorizontalAlignment = HorizontalAlignment.Stretch };
-			m_search = new TextBox { Padding = new Thickness(34, 7, 9, 7), ToolTip = "Rechercher (Ctrl+F)" };
+			m_search = new TextBox { Padding = new Thickness(34, 7, 9, 7), ToolTip = L.T("Rechercher (Ctrl+F)") };
 			Path sic = MakeIcon("IcSearch", 15); sic.HorizontalAlignment = HorizontalAlignment.Left; sic.Margin = new Thickness(11, 0, 0, 0);
 			sic.SetResourceReference(Shape.StrokeProperty, "Muted"); sic.IsHitTestVisible = false;
-			TextBlock ph = new TextBlock { Text = "Rechercher…", Margin = new Thickness(36, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center, IsHitTestVisible = false };
+			TextBlock ph = new TextBlock { Text = L.T("Rechercher…"), Margin = new Thickness(36, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center, IsHitTestVisible = false };
 			ph.SetResourceReference(TextBlock.ForegroundProperty, "Muted");
 			m_search.TextChanged += delegate { ph.Visibility = m_search.Text.Length == 0 ? Visibility.Visible : Visibility.Collapsed; RefreshList(); };
 			sg.Children.Add(m_search); sg.Children.Add(sic); sg.Children.Add(ph);
@@ -198,7 +198,7 @@ namespace Cerberus.App.Views
 
 			Content = root;
 
-			SafeClipboard.Countdown += n => Dispatcher.Invoke(() => m_clipInfo.Text = n > 0 ? "Presse-papiers effacé dans " + n + " s" : "");
+			SafeClipboard.Countdown += n => Dispatcher.Invoke(() => m_clipInfo.Text = n > 0 ? L.T("Presse-papiers effacé dans ") + n + " s" : "");
 			Session.Changed += () => Dispatcher.Invoke(UpdateUi);
 
 			m_idle = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
@@ -258,7 +258,7 @@ namespace Cerberus.App.Views
 			count.SetResourceReference(TextBlock.ForegroundProperty, "Muted");
 			count.SetValue(VerticalAlignmentProperty, VerticalAlignment.Center);
 			var name = new FrameworkElementFactory(typeof(TextBlock));
-			name.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("Name"));
+			name.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("DisplayName"));
 			name.SetValue(VerticalAlignmentProperty, VerticalAlignment.Center);
 			dp.AppendChild(path); dp.AppendChild(count); dp.AppendChild(name);
 			return new DataTemplate { VisualTree = dp };
@@ -311,7 +311,7 @@ namespace Cerberus.App.Views
 			m_search.IsEnabled = open;
 			foreach(Button b in m_dbOnly) b.IsEnabled = open;
 			m_dbName.Text = open ? (string.IsNullOrEmpty(Session.Db.Name) ? System.IO.Path.GetFileName(Session.Path) : Session.Db.Name) +
-				(Session.Db.Modified ? " •" : "") : (m_lockedPath != null ? "Verrouillée" : "Aucune base ouverte");
+				(Session.Db.Modified ? " •" : "") : (m_lockedPath != null ? L.T("Verrouillée") : L.T("Aucune base ouverte"));
 			m_detailsCol.Width = Settings.Current.ShowDetailsPane ? new GridLength(380) : new GridLength(0);
 			if(open) { RefreshSide(); }
 			else { BuildWelcome(); m_list.ItemsSource = null; m_details.Content = null; m_totpTick = null; }
@@ -325,9 +325,9 @@ namespace Cerberus.App.Views
 			Path p = MakeIcon(m_lockedPath != null ? "IcLock" : "IcShield", 34); p.Stroke = Brushes.White;
 			logo.Child = p;
 			m_welcomeBody.Children.Add(logo);
-			m_welcomeBody.Children.Add(new TextBlock { Text = m_lockedPath != null ? "Base verrouillée" : "KeePass Cerberus", FontSize = 26, FontWeight = FontWeights.SemiBold,
+			m_welcomeBody.Children.Add(new TextBlock { Text = m_lockedPath != null ? L.T("Base verrouillée") : "KeePass Cerberus", FontSize = 26, FontWeight = FontWeights.SemiBold,
 				HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 18, 0, 4) });
-			TextBlock sub = new TextBlock { Text = m_lockedPath ?? "Gestionnaire de mots de passe local, compatible KeePass.", HorizontalAlignment = HorizontalAlignment.Center,
+			TextBlock sub = new TextBlock { Text = m_lockedPath ?? L.T("Gestionnaire de mots de passe local, compatible KeePass."), HorizontalAlignment = HorizontalAlignment.Center,
 				TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center, TextTrimming = TextTrimming.None };
 			sub.SetResourceReference(TextBlock.ForegroundProperty, "Muted");
 			m_welcomeBody.Children.Add(sub);
@@ -335,14 +335,14 @@ namespace Cerberus.App.Views
 			StackPanel btns = new StackPanel { Margin = new Thickness(0, 26, 0, 0) };
 			if(m_lockedPath != null)
 			{
-				Button un = new Button { Content = IconText("IcLock", "Déverrouiller"), Style = (Style)FindResource("AccentButton"), MinHeight = 42, Margin = new Thickness(0, 0, 0, 8) };
+				Button un = new Button { Content = IconText("IcLock", L.T("Déverrouiller")), Style = (Style)FindResource("AccentButton"), MinHeight = 42, Margin = new Thickness(0, 0, 0, 8) };
 				un.Click += async delegate { await OpenAsync(m_lockedPath); };
 				btns.Children.Add(un);
 			}
-			Button open = new Button { Content = IconText("IcOpen", "Ouvrir une base…"), MinHeight = 42, Margin = new Thickness(0, 0, 0, 8) };
+			Button open = new Button { Content = IconText("IcOpen", L.T("Ouvrir une base…")), MinHeight = 42, Margin = new Thickness(0, 0, 0, 8) };
 			if(m_lockedPath == null) open.Style = (Style)FindResource("AccentButton");
 			open.Click += async delegate { await OpenDialogAsync(); };
-			Button create = new Button { Content = IconText("IcNewDb", "Créer une nouvelle base…"), MinHeight = 42 };
+			Button create = new Button { Content = IconText("IcNewDb", L.T("Créer une nouvelle base…")), MinHeight = 42 };
 			create.Click += async delegate { await NewDatabaseAsync(); };
 			btns.Children.Add(open); btns.Children.Add(create);
 			m_welcomeBody.Children.Add(btns);
@@ -350,7 +350,7 @@ namespace Cerberus.App.Views
 			var recent = Settings.Current.RecentDatabases.Where(File.Exists).Take(6).ToList();
 			if(recent.Count > 0)
 			{
-				m_welcomeBody.Children.Add(new TextBlock { Text = "RÉCENTS", Style = (Style)FindResource("Section"), Margin = new Thickness(0, 28, 0, 6) });
+				m_welcomeBody.Children.Add(new TextBlock { Text = L.T("RÉCENTS"), Style = (Style)FindResource("Section"), Margin = new Thickness(0, 28, 0, 6) });
 				foreach(string r in recent)
 				{
 					Button b = new Button { Style = (Style)FindResource("GhostButton"), HorizontalContentAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 1, 0, 1) };
@@ -375,11 +375,11 @@ namespace Cerberus.App.Views
 
 			var all = Session.AllEntries(false).ToList();
 			List<Categories.Cat> items = new List<Categories.Cat>();
-			items.Add(new Categories.Cat { Name = "Toutes les entrées", Icon = "IcList", Color = "#4C8DFF", Count = all.Count, IsAll = true });
+			items.Add(new Categories.Cat { Name = L.T("Toutes les entrées"), Icon = "IcList", Color = "#4C8DFF", Count = all.Count, IsAll = true });
 			foreach(string n in Categories.Names)
 				items.Add(new Categories.Cat { Name = n, Icon = Categories.Icons[n], Color = Categories.Colors[n],
 					Count = all.Count(e => string.Equals(Categories.Of(e), n, StringComparison.OrdinalIgnoreCase)) });
-			items.Add(new Categories.Cat { Name = "Non classées", Icon = "IcQuestion", Color = "#8C92A5", Count = all.Count(e => Categories.Of(e) == null), IsNone = true });
+			items.Add(new Categories.Cat { Name = L.T("Non classées"), Icon = "IcQuestion", Color = "#8C92A5", Count = all.Count(e => Categories.Of(e) == null), IsNone = true });
 
 			if(Settings.Current.ShowFolders)
 			{
@@ -388,7 +388,7 @@ namespace Cerberus.App.Views
 			}
 			PwGroup pgBin = Session.RecycleBin;
 			if(pgBin != null)
-				items.Add(new Categories.Cat { Name = "Corbeille", Icon = "IcTrash", Color = "#8C92A5", Count = (int)pgBin.GetEntriesCount(true), IsBin = true, Group = pgBin });
+				items.Add(new Categories.Cat { Name = L.T("Corbeille"), Icon = "IcTrash", Color = "#8C92A5", Count = (int)pgBin.GetEntriesCount(true), IsBin = true, Group = pgBin });
 
 			m_side.ItemsSource = items;
 			Categories.Cat sel = items.FirstOrDefault(c => prevGroup != null ? c.Group == prevGroup : c.Name == prevName) ?? items[0];
@@ -432,7 +432,7 @@ namespace Cerberus.App.Views
 			if(keep != null) m_list.SelectedItem = keep;
 			else if(vms.Count > 0) m_list.SelectedIndex = 0;
 			else ShowDetails();
-			Status(vms.Count + " entrée(s)" + (q.Length > 0 ? " correspondant à « " + q + " »" : ""));
+			Status(vms.Count + L.T(" entrée(s)") + (q.Length > 0 ? L.T(" correspondant à « ") + q + " »" : ""));
 		}
 
 		private static bool Matches(PwEntry e, string q)
@@ -453,7 +453,7 @@ namespace Cerberus.App.Views
 			try { if(url.Length > 0) host = new Uri(url.Contains("://") ? url : "https://" + url).Host; } catch(Exception) { }
 			string sub = user.Length > 0 && host.Length > 0 ? user + "  ·  " + host : (user.Length > 0 ? user : host);
 			string title = e.Strings.ReadSafe(PwDefs.TitleField);
-			return new EntryVm { Entry = e, Title = title.Length > 0 ? title : "(sans titre)", Subtitle = sub,
+			return new EntryVm { Entry = e, Title = title.Length > 0 ? title : L.T("(sans titre)"), Subtitle = sub,
 				Icon = cat != null ? Categories.Icons[cat] : "IcKey", Color = cat != null ? Categories.Colors[cat] : "#8C92A5" };
 		}
 
@@ -465,7 +465,7 @@ namespace Cerberus.App.Views
 			EntryVm vm = Selected;
 			if(vm == null)
 			{
-				TextBlock e = new TextBlock { Text = "Sélectionnez une entrée", HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 40, 0, 0) };
+				TextBlock e = new TextBlock { Text = L.T("Sélectionnez une entrée"), HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 40, 0, 0) };
 				e.SetResourceReference(TextBlock.ForegroundProperty, "Muted");
 				m_details.Content = e;
 				return;
@@ -481,24 +481,24 @@ namespace Cerberus.App.Views
 			StackPanel ht = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
 			ht.Children.Add(new TextBlock { Text = vm.Title, FontSize = 18, FontWeight = FontWeights.SemiBold, TextWrapping = TextWrapping.Wrap, TextTrimming = TextTrimming.None });
 			string cat = Categories.Of(pe);
-			TextBlock ct = new TextBlock { Text = cat ?? "Non classée", FontSize = 12 };
+			TextBlock ct = new TextBlock { Text = cat != null ? L.T(cat) : L.T("Non classée"), FontSize = 12 };
 			ct.SetResourceReference(TextBlock.ForegroundProperty, "Muted");
 			ht.Children.Add(ct);
 			head.Children.Add(ht);
 			sp.Children.Add(head);
 
 			StackPanel actions = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
-			Button edit = new Button { Content = IconText("IcEdit", "Modifier"), Margin = new Thickness(0, 0, 8, 0) };
+			Button edit = new Button { Content = IconText("IcEdit", L.T("Modifier")), Margin = new Thickness(0, 0, 8, 0) };
 			edit.Click += delegate { EditEntry(); };
-			Button del = new Button { Content = IconText("IcTrash", "Supprimer"), Style = (Style)FindResource("DangerButton") };
+			Button del = new Button { Content = IconText("IcTrash", L.T("Supprimer")), Style = (Style)FindResource("DangerButton") };
 			del.Click += async delegate { await DeleteEntryAsync(); };
-			Button qr = new Button { Content = IconText("IcQr", "QR code"), Margin = new Thickness(0, 0, 8, 0), ToolTip = "Afficher identifiant / mot de passe en QR code pour un téléphone" };
+			Button qr = new Button { Content = IconText("IcQr", L.T("QR code")), Margin = new Thickness(0, 0, 8, 0), ToolTip = L.T("Afficher identifiant / mot de passe en QR code pour un téléphone") };
 			qr.Click += delegate { ShowQr(); };
 			actions.Children.Add(edit); actions.Children.Add(qr); actions.Children.Add(del);
 			sp.Children.Add(actions);
 
-			AddRow(sp, "Nom d'utilisateur", pe.Strings.Get(PwDefs.UserNameField), false);
-			AddRow(sp, "Mot de passe", pe.Strings.Get(PwDefs.PasswordField), true);
+			AddRow(sp, L.T("Nom d'utilisateur"), pe.Strings.Get(PwDefs.UserNameField), false);
+			AddRow(sp, L.T("Mot de passe"), pe.Strings.Get(PwDefs.PasswordField), true);
 			string url = pe.Strings.ReadSafe(PwDefs.UrlField);
 			if(url.Length > 0)
 			{
@@ -508,9 +508,9 @@ namespace Cerberus.App.Views
 			Totp.Params tp = Totp.FromEntry(pe);
 			if(tp != null)
 			{
-				sp.Children.Add(new TextBlock { Text = "Code TOTP", Style = (Style)FindResource("FieldLabel") });
+				sp.Children.Add(new TextBlock { Text = L.T("Code TOTP"), Style = (Style)FindResource("FieldLabel") });
 				DockPanel d = new DockPanel();
-				Button cp = new Button { Style = (Style)FindResource("IconButton"), Content = MakeIcon("IcCopy"), ToolTip = "Copier le code" };
+				Button cp = new Button { Style = (Style)FindResource("IconButton"), Content = MakeIcon("IcCopy"), ToolTip = L.T("Copier le code") };
 				DockPanel.SetDock(cp, Dock.Right);
 				ProgressBar pb = new ProgressBar { Width = 60, Maximum = tp.Period, Margin = new Thickness(10, 0, 6, 0), VerticalAlignment = VerticalAlignment.Center };
 				DockPanel.SetDock(pb, Dock.Right);
@@ -522,10 +522,10 @@ namespace Cerberus.App.Views
 				m_totpTick = delegate
 				{
 					try { int left; cur = Totp.Code(tp, DateTime.UtcNow, out left); code.Text = cur.Substring(0, cur.Length / 2) + " " + cur.Substring(cur.Length / 2); pb.Value = left; }
-					catch(Exception) { code.Text = "secret invalide"; }
+					catch(Exception) { code.Text = L.T("secret invalide"); }
 				};
 				m_totpTick();
-				cp.Click += delegate { SafeClipboard.Copy(cur); Status("Code TOTP copié."); };
+				cp.Click += delegate { SafeClipboard.Copy(cur); Status(L.T("Code TOTP copié.")); };
 			}
 
 			foreach(var kv in pe.Strings)
@@ -537,7 +537,7 @@ namespace Cerberus.App.Views
 			string notes = pe.Strings.ReadSafe(PwDefs.NotesField);
 			if(notes.Length > 0)
 			{
-				sp.Children.Add(new TextBlock { Text = "Notes", Style = (Style)FindResource("FieldLabel") });
+				sp.Children.Add(new TextBlock { Text = L.T("Notes"), Style = (Style)FindResource("FieldLabel") });
 				Border nb = new Border { Style = (Style)FindResource("Card"), Padding = new Thickness(12) };
 				nb.Child = new TextBox { Text = notes, IsReadOnly = true, TextWrapping = TextWrapping.Wrap, BorderThickness = new Thickness(0), Background = Brushes.Transparent, Padding = new Thickness(0), MinHeight = 0 };
 				sp.Children.Add(nb);
@@ -560,14 +560,14 @@ namespace Cerberus.App.Views
 
 			if(pe.Binaries.UCount > 0)
 			{
-				sp.Children.Add(new TextBlock { Text = "Pièces jointes", Style = (Style)FindResource("FieldLabel") });
+				sp.Children.Add(new TextBlock { Text = L.T("Pièces jointes"), Style = (Style)FindResource("FieldLabel") });
 				foreach(var kv in pe.Binaries) sp.Children.Add(new TextBlock { Text = "📎 " + kv.Key });
 			}
 
 			TextBlock meta = new TextBlock { FontSize = 11.5, Margin = new Thickness(0, 18, 0, 0), TextWrapping = TextWrapping.Wrap, TextTrimming = TextTrimming.None,
-				Text = "Créée le " + pe.CreationTime.ToLocalTime().ToString("g") + "\nModifiée le " + pe.LastModificationTime.ToLocalTime().ToString("g") +
-					(pe.Expires ? "\nExpire le " + pe.ExpiryTime.ToLocalTime().ToString("g") + (pe.ExpiryTime < DateTime.UtcNow ? " (expirée)" : "") : "") +
-					(pe.History.UCount > 0 ? "\n" + pe.History.UCount + " version(s) dans l'historique" : "") };
+				Text = L.T("Créée le ") + pe.CreationTime.ToLocalTime().ToString("g") + "\n" + L.T("Modifiée le ") + pe.LastModificationTime.ToLocalTime().ToString("g") +
+					(pe.Expires ? "\n" + L.T("Expire le ") + pe.ExpiryTime.ToLocalTime().ToString("g") + (pe.ExpiryTime < DateTime.UtcNow ? L.T(" (expirée)") : "") : "") +
+					(pe.History.UCount > 0 ? "\n" + pe.History.UCount + L.T(" version(s) dans l'historique") : "") };
 			meta.SetResourceReference(TextBlock.ForegroundProperty, "Muted");
 			sp.Children.Add(meta);
 
@@ -582,14 +582,14 @@ namespace Cerberus.App.Views
 			b.SetResourceReference(Border.BackgroundProperty, "Surface");
 			b.SetResourceReference(Border.BorderBrushProperty, "Border");
 			DockPanel d = new DockPanel();
-			Button cp = new Button { Style = (Style)FindResource("IconButton"), Content = MakeIcon("IcCopy"), ToolTip = "Copier" };
+			Button cp = new Button { Style = (Style)FindResource("IconButton"), Content = MakeIcon("IcCopy"), ToolTip = L.T("Copier") };
 			DockPanel.SetDock(cp, Dock.Right);
 			d.Children.Add(cp);
 			TextBlock val = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
 			if(bSecret) val.FontFamily = new FontFamily("Consolas");
 			if(bSecret)
 			{
-				ToggleButton eye = new ToggleButton { Style = (Style)FindResource("ToggleIcon"), Content = MakeIcon("IcEye"), ToolTip = "Afficher / masquer" };
+				ToggleButton eye = new ToggleButton { Style = (Style)FindResource("ToggleIcon"), Content = MakeIcon("IcEye"), ToolTip = L.T("Afficher / masquer") };
 				DockPanel.SetDock(eye, Dock.Right);
 				d.Children.Add(eye);
 				val.Text = "••••••••••••";
@@ -599,13 +599,13 @@ namespace Cerberus.App.Views
 			else val.Text = ps.ReadString();
 			if(label == "URL")
 			{
-				Button go = new Button { Style = (Style)FindResource("IconButton"), Content = MakeIcon("IcGlobe"), ToolTip = "Ouvrir" };
+				Button go = new Button { Style = (Style)FindResource("IconButton"), Content = MakeIcon("IcGlobe"), ToolTip = L.T("Ouvrir") };
 				DockPanel.SetDock(go, Dock.Right);
 				d.Children.Insert(0, go);
 				go.Click += delegate { OpenUrl(); };
 			}
 			d.Children.Add(val);
-			cp.Click += delegate { SafeClipboard.Copy(ps.ReadString()); Status(label + " copié."); };
+			cp.Click += delegate { SafeClipboard.Copy(ps.ReadString()); Status(label + L.T(" copié.")); };
 			b.Child = d;
 			sp.Children.Add(b);
 			return b;
@@ -623,7 +623,7 @@ namespace Cerberus.App.Views
 		{
 			if(Selected == null) return;
 			SafeClipboard.Copy(Selected.Entry.Strings.ReadSafe(strField));
-			Status((strField == PwDefs.PasswordField ? "Mot de passe" : "Nom d'utilisateur") + " copié.");
+			Status((strField == PwDefs.PasswordField ? L.T("Mot de passe") : L.T("Nom d'utilisateur")) + L.T(" copié."));
 		}
 
 		private void OpenUrl()
@@ -634,7 +634,7 @@ namespace Cerberus.App.Views
 			if(!url.Contains("://")) url = "https://" + url;
 			Uri u;
 			if(!Uri.TryCreate(url, UriKind.Absolute, out u) || (u.Scheme != "http" && u.Scheme != "https"))
-			{ Dialog.Info(this, "URL", "Seules les adresses http(s) peuvent être ouvertes depuis KeePass Cerberus."); return; }
+			{ Dialog.Info(this, "URL", L.T("Seules les adresses http(s) peuvent être ouvertes depuis KeePass Cerberus.")); return; }
 			try { Process.Start(new ProcessStartInfo(u.AbsoluteUri) { UseShellExecute = true }); }
 			catch(Exception ex) { Dialog.Error(this, "URL", ex.Message); }
 		}
@@ -676,7 +676,7 @@ namespace Cerberus.App.Views
 			if(Selected == null) return;
 			PwEntry src = Selected.Entry;
 			PwEntry pe = src.Duplicate();
-			pe.Strings.Set(PwDefs.TitleField, new ProtectedString(Session.Db.MemoryProtection.ProtectTitle, src.Strings.ReadSafe(PwDefs.TitleField) + " (copie)"));
+			pe.Strings.Set(PwDefs.TitleField, new ProtectedString(Session.Db.MemoryProtection.ProtectTitle, src.Strings.ReadSafe(PwDefs.TitleField) + L.T(" (copie)")));
 			src.ParentGroup.AddEntry(pe, true);
 			await ChangedAsync();
 			RefreshSide();
@@ -690,8 +690,8 @@ namespace Cerberus.App.Views
 			PwGroup bin = Session.RecycleBin;
 			bool bPermanent = !Session.Db.RecycleBinEnabled || (bin != null && pe.IsContainedIn(bin));
 			string title = pe.Strings.ReadSafe(PwDefs.TitleField);
-			if(!Dialog.Confirm(this, bPermanent ? "Supprimer définitivement" : "Mettre à la corbeille",
-				"« " + title + " » " + (bPermanent ? "sera supprimée définitivement." : "sera déplacée dans la corbeille."), "Supprimer", true)) return;
+			if(!Dialog.Confirm(this, bPermanent ? L.T("Supprimer définitivement") : L.T("Mettre à la corbeille"),
+				"« " + title + " » " + (bPermanent ? L.T("sera supprimée définitivement.") : L.T("sera déplacée dans la corbeille.")), L.T("Supprimer"), true)) return;
 			Session.DeleteEntry(pe);
 			await ChangedAsync();
 			RefreshSide();
@@ -735,27 +735,27 @@ namespace Cerberus.App.Views
 				++n;
 			}
 			if(n > 0) { await ChangedAsync(); RefreshSide(); }
-			Dialog.Info(this, "Classement automatique", n + " entrée(s) classée(s). Les catégories sont des tags KeePass ; ajustez-les avec un clic droit → Catégorie.");
+			Dialog.Info(this, L.T("Classement automatique"), n + L.T(" entrée(s) classée(s). Les catégories sont des tags KeePass ; ajustez-les avec un clic droit → Catégorie."));
 		}
 
 		private ContextMenu EntryMenu()
 		{
 			ContextMenu m = new ContextMenu();
-			m.Items.Add(Mi("Copier le nom d'utilisateur", "IcUser", "Ctrl+B", () => CopyField(PwDefs.UserNameField)));
-			m.Items.Add(Mi("Copier le mot de passe", "IcKey", "Ctrl+C", () => CopyField(PwDefs.PasswordField)));
-			m.Items.Add(Mi("Ouvrir l'URL", "IcGlobe", "Ctrl+U", OpenUrl));
-			m.Items.Add(Mi("Saisie automatique", "IcType", "Ctrl+V", async () => await AutoTypeSelectedAsync()));
-			m.Items.Add(Mi("QR code (téléphone)…", "IcQr", null, ShowQr));
+			m.Items.Add(Mi(L.T("Copier le nom d'utilisateur"), "IcUser", "Ctrl+B", () => CopyField(PwDefs.UserNameField)));
+			m.Items.Add(Mi(L.T("Copier le mot de passe"), "IcKey", "Ctrl+C", () => CopyField(PwDefs.PasswordField)));
+			m.Items.Add(Mi(L.T("Ouvrir l'URL"), "IcGlobe", "Ctrl+U", OpenUrl));
+			m.Items.Add(Mi(L.T("Saisie automatique"), "IcType", "Ctrl+V", async () => await AutoTypeSelectedAsync()));
+			m.Items.Add(Mi(L.T("QR code (téléphone)…"), "IcQr", null, ShowQr));
 			m.Items.Add(new Separator());
-			m.Items.Add(Mi("Modifier…", "IcEdit", "Entrée", EditEntry));
-			m.Items.Add(Mi("Dupliquer", "IcCopy", null, DuplicateEntry));
-			MenuItem cat = Mi("Catégorie", "IcPieces", null, null);
-			foreach(string n in Categories.Names) { string c = n; MenuItem x = Mi(n, Categories.Icons[n], null, () => SetCategory(c)); x.IsChecked = Categories.Of(Selected.Entry) == n; cat.Items.Add(x); }
+			m.Items.Add(Mi(L.T("Modifier…"), "IcEdit", L.T("Entrée"), EditEntry));
+			m.Items.Add(Mi(L.T("Dupliquer"), "IcCopy", null, DuplicateEntry));
+			MenuItem cat = Mi(L.T("Catégorie"), "IcPieces", null, null);
+			foreach(string n in Categories.Names) { string c = n; MenuItem x = Mi(L.T(n), Categories.Icons[n], null, () => SetCategory(c)); x.IsChecked = Categories.Of(Selected.Entry) == n; cat.Items.Add(x); }
 			cat.Items.Add(new Separator());
-			cat.Items.Add(Mi("Aucune", null, null, () => SetCategory(null)));
+			cat.Items.Add(Mi(L.T("Aucune"), null, null, () => SetCategory(null)));
 			m.Items.Add(cat);
 			m.Items.Add(new Separator());
-			m.Items.Add(Mi("Supprimer", "IcTrash", "Suppr", async () => await DeleteEntryAsync()));
+			m.Items.Add(Mi(L.T("Supprimer"), "IcTrash", L.T("Suppr"), async () => await DeleteEntryAsync()));
 			return m;
 		}
 
@@ -771,25 +771,25 @@ namespace Cerberus.App.Views
 		{
 			bool open = Session.IsOpen;
 			ContextMenu m = new ContextMenu { PlacementTarget = this, Placement = PlacementMode.Mouse };
-			m.Items.Add(Mi("Nouvelle base…", "IcNewDb", null, async () => await NewDatabaseAsync()));
-			m.Items.Add(Mi("Ouvrir une base…", "IcOpen", "Ctrl+O", async () => await OpenDialogAsync()));
-			MenuItem save = Mi("Enregistrer", "IcSave", "Ctrl+S", async () => await SaveAsync()); save.IsEnabled = open; m.Items.Add(save);
-			MenuItem saveAs = Mi("Enregistrer sous…", "IcSave", null, async () => await SaveAsAsync()); saveAs.IsEnabled = open; m.Items.Add(saveAs);
+			m.Items.Add(Mi(L.T("Nouvelle base…"), "IcNewDb", null, async () => await NewDatabaseAsync()));
+			m.Items.Add(Mi(L.T("Ouvrir une base…"), "IcOpen", "Ctrl+O", async () => await OpenDialogAsync()));
+			MenuItem save = Mi(L.T("Enregistrer"), "IcSave", "Ctrl+S", async () => await SaveAsync()); save.IsEnabled = open; m.Items.Add(save);
+			MenuItem saveAs = Mi(L.T("Enregistrer sous…"), "IcSave", null, async () => await SaveAsAsync()); saveAs.IsEnabled = open; m.Items.Add(saveAs);
 			m.Items.Add(new Separator());
-			MenuItem ck = Mi("Changer la clé maître…", "IcKey", null, async () => await ChangeKeyAsync()); ck.IsEnabled = open; m.Items.Add(ck);
-			MenuItem ds = Mi("Paramètres de la base…", "IcShield", null, async () => await DbSettingsAsync()); ds.IsEnabled = open; m.Items.Add(ds);
-			MenuItem ac = Mi("Classer automatiquement", "IcPieces", null, AutoClassify); ac.IsEnabled = open; m.Items.Add(ac);
+			MenuItem ck = Mi(L.T("Changer la clé maître…"), "IcKey", null, async () => await ChangeKeyAsync()); ck.IsEnabled = open; m.Items.Add(ck);
+			MenuItem ds = Mi(L.T("Paramètres de la base…"), "IcShield", null, async () => await DbSettingsAsync()); ds.IsEnabled = open; m.Items.Add(ds);
+			MenuItem ac = Mi(L.T("Classer automatiquement"), "IcPieces", null, AutoClassify); ac.IsEnabled = open; m.Items.Add(ac);
 			m.Items.Add(new Separator());
-			MenuItem f = Mi("Afficher les dossiers", "IcFolder", null, () => { Settings.Current.ShowFolders = !Settings.Current.ShowFolders; Settings.Save(); UpdateUi(); });
+			MenuItem f = Mi(L.T("Afficher les dossiers"), "IcFolder", null, () => { Settings.Current.ShowFolders = !Settings.Current.ShowFolders; Settings.Save(); UpdateUi(); });
 			f.IsChecked = Settings.Current.ShowFolders; m.Items.Add(f);
-			MenuItem dp = Mi("Panneau de détails", "IcList", null, () => { Settings.Current.ShowDetailsPane = !Settings.Current.ShowDetailsPane; Settings.Save(); UpdateUi(); });
+			MenuItem dp = Mi(L.T("Panneau de détails"), "IcList", null, () => { Settings.Current.ShowDetailsPane = !Settings.Current.ShowDetailsPane; Settings.Save(); UpdateUi(); });
 			dp.IsChecked = Settings.Current.ShowDetailsPane; m.Items.Add(dp);
-			m.Items.Add(Mi("Options…", "IcSettings", null, () => new OptionsWindow { Owner = this }.ShowDialog()));
-			m.Items.Add(Mi("Interface classique (KeePass)…", "IcPieces", null, async () => await ClassicAsync()));
+			m.Items.Add(Mi(L.T("Options…"), "IcSettings", null, () => new OptionsWindow { Owner = this }.ShowDialog()));
+			m.Items.Add(Mi(L.T("Interface classique (KeePass)…"), "IcPieces", null, async () => await ClassicAsync()));
 			m.Items.Add(new Separator());
-			m.Items.Add(Mi("À propos", "IcQuestion", null, () => Dialog.Info(this, "KeePass Cerberus",
-				"Version 1.0 — basé sur KeePass 2.62 (Dominik Reichl, GPL v2+).\nCascade de chiffrement, Argon2id jusqu'à 4 Gio, facteurs PIN / motif / Shamir, protection anti-capture.\nFormat KDBX 4 : les bases KeePass existantes s'ouvrent sans conversion.")));
-			m.Items.Add(Mi("Quitter", null, null, Close));
+			m.Items.Add(Mi(L.T("À propos"), "IcQuestion", null, () => Dialog.Info(this, "KeePass Cerberus",
+				L.T("Version") + " " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3) + " — " + L.T("basé sur KeePass 2.62 (Dominik Reichl, GPL v2+).") + "\n" + L.T("Cascade de chiffrement, Argon2id jusqu'à 4 Gio, facteurs PIN / motif / Shamir, protection anti-capture.") + "\n" + L.T("Format KDBX 4 : les bases KeePass existantes s'ouvrent sans conversion."))));
+			m.Items.Add(Mi(L.T("Quitter"), null, null, Close));
 			return m;
 		}
 
@@ -805,7 +805,7 @@ namespace Cerberus.App.Views
 		private async Task OpenDialogAsync()
 		{
 			if(!await CloseCurrentAsync()) return;
-			var ofd = new OpenFileDialog { Title = "Ouvrir une base", Filter = "Bases KeePass (*.kdbx)|*.kdbx|Tous les fichiers (*.*)|*.*" };
+			var ofd = new OpenFileDialog { Title = L.T("Ouvrir une base"), Filter = L.T("Bases KeePass (*.kdbx)|*.kdbx|Tous les fichiers (*.*)|*.*") };
 			if(ofd.ShowDialog(this) != true) return;
 			await OpenAsync(ofd.FileName);
 		}
@@ -818,14 +818,14 @@ namespace Cerberus.App.Views
 			m_lockedPath = null;
 			m_search.Text = "";
 			Session.Attach(w.Result, strPath);
-			Status("Base ouverte : " + Session.CipherName(Session.Db.DataCipherUuid) + " · " + Session.DescribeKdf(Session.Db.KdfParameters));
+			Status(L.T("Base ouverte : ") + Session.CipherName(Session.Db.DataCipherUuid) + " · " + Session.DescribeKdf(Session.Db.KdfParameters));
 			await Task.Yield();
 		}
 
 		private async Task NewDatabaseAsync()
 		{
 			if(!await CloseCurrentAsync()) return;
-			var sfd = new SaveFileDialog { Title = "Créer une base", Filter = "Base KeePass (*.kdbx)|*.kdbx", FileName = "MesMotsDePasse.kdbx" };
+			var sfd = new SaveFileDialog { Title = L.T("Créer une base"), Filter = L.T("Base KeePass (*.kdbx)|*.kdbx"), FileName = "MesMotsDePasse.kdbx" };
 			if(sfd.ShowDialog(this) != true) return;
 			CreateKeyWindow w = new CreateKeyWindow(sfd.FileName, true) { Owner = this };
 			if(w.ShowDialog() != true) return;
@@ -835,29 +835,29 @@ namespace Cerberus.App.Views
 			db.Name = System.IO.Path.GetFileNameWithoutExtension(sfd.FileName);
 			db.RootGroup.Name = db.Name;
 			Session.ApplyProfile(db, w.ResultProfile ?? Session.Profiles[2]);
-			Busy("Création et chiffrement de la base…");
+			Busy(L.T("Création et chiffrement de la base…"));
 			try { await Task.Run(() => db.Save(new KeePassLib.Interfaces.NullStatusLogger())); }
-			catch(Exception ex) { Busy(null); Dialog.Error(this, "Création impossible", ex.Message); return; }
+			catch(Exception ex) { Busy(null); Dialog.Error(this, L.T("Création impossible"), ex.Message); return; }
 			Busy(null);
 			Session.Attach(db, sfd.FileName);
-			Status("Base créée : " + Session.CipherName(db.DataCipherUuid) + " · " + Session.DescribeKdf(db.KdfParameters));
+			Status(L.T("Base créée : ") + Session.CipherName(db.DataCipherUuid) + " · " + Session.DescribeKdf(db.KdfParameters));
 		}
 
 		private async Task<bool> SaveAsync()
 		{
 			if(!Session.IsOpen) return true;
-			Busy("Enregistrement et chiffrement…");
-			try { await Task.Run(() => Session.Save()); Status("Enregistré."); return true; }
-			catch(Exception ex) { Dialog.Error(this, "Enregistrement impossible", ex.Message); return false; }
+			Busy(L.T("Enregistrement et chiffrement…"));
+			try { await Task.Run(() => Session.Save()); Status(L.T("Enregistré.")); return true; }
+			catch(Exception ex) { Dialog.Error(this, L.T("Enregistrement impossible"), ex.Message); return false; }
 			finally { Busy(null); Session.RaiseChanged(); }
 		}
 
 		private async Task SaveAsAsync()
 		{
 			if(!Session.IsOpen) return;
-			var sfd = new SaveFileDialog { Title = "Enregistrer sous", Filter = "Base KeePass (*.kdbx)|*.kdbx", FileName = System.IO.Path.GetFileName(Session.Path) };
+			var sfd = new SaveFileDialog { Title = L.T("Enregistrer sous"), Filter = L.T("Base KeePass (*.kdbx)|*.kdbx"), FileName = System.IO.Path.GetFileName(Session.Path) };
 			if(sfd.ShowDialog(this) != true) return;
-			Busy("Enregistrement…");
+			Busy(L.T("Enregistrement…"));
 			try
 			{
 				var ioc = KeePassLib.Serialization.IOConnectionInfo.FromPath(sfd.FileName);
@@ -869,9 +869,9 @@ namespace Cerberus.App.Views
 				Session.SetPath(sfd.FileName);
 				Settings.Current.AddRecent(sfd.FileName);
 				Settings.Save();
-				Status("Enregistré sous " + sfd.FileName);
+				Status(L.T("Enregistré sous ") + sfd.FileName);
 			}
-			catch(Exception ex) { Dialog.Error(this, "Enregistrement impossible", ex.Message); }
+			catch(Exception ex) { Dialog.Error(this, L.T("Enregistrement impossible"), ex.Message); }
 			finally { Busy(null); Session.RaiseChanged(); }
 		}
 
@@ -890,7 +890,7 @@ namespace Cerberus.App.Views
 			Session.Db.MasterKey = w.ResultKey;
 			Session.Db.MasterKeyChanged = DateTime.UtcNow;
 			await ChangedAsync();
-			if(!Settings.Current.AutoSave) Dialog.Info(this, "Clé maître", "La nouvelle clé sera appliquée au prochain enregistrement.");
+			if(!Settings.Current.AutoSave) Dialog.Info(this, L.T("Clé maître"), L.T("La nouvelle clé sera appliquée au prochain enregistrement."));
 		}
 
 		private async Task DbSettingsAsync()
@@ -900,7 +900,7 @@ namespace Cerberus.App.Views
 			if(w.ShowDialog() != true) return;
 			await ChangedAsync();
 			RefreshSide();
-			Status("Paramètres : " + Session.CipherName(Session.Db.DataCipherUuid) + " · " + Session.DescribeKdf(Session.Db.KdfParameters));
+			Status(L.T("Paramètres : ") + Session.CipherName(Session.Db.DataCipherUuid) + " · " + Session.DescribeKdf(Session.Db.KdfParameters));
 		}
 
 		/// <summary>Close the current database, asking to save if needed.</summary>
@@ -912,7 +912,7 @@ namespace Cerberus.App.Views
 				if(Settings.Current.AutoSave) { if(!await SaveAsync()) return false; }
 				else
 				{
-					bool save = Dialog.Show(this, "Modifications non enregistrées", "Enregistrer les modifications avant de fermer la base ?", "Enregistrer", "Ne pas enregistrer");
+					bool save = Dialog.Show(this, L.T("Modifications non enregistrées"), L.T("Enregistrer les modifications avant de fermer la base ?"), L.T("Enregistrer"), L.T("Ne pas enregistrer"));
 					if(save && !await SaveAsync()) return false;
 				}
 			}
@@ -926,7 +926,7 @@ namespace Cerberus.App.Views
 			string p = Session.Path;
 			if(Session.Db.Modified && !await SaveAsync())
 			{
-				Status("Verrouillage annulé : l'enregistrement a échoué.");
+				Status(L.T("Verrouillage annulé : l'enregistrement a échoué."));
 				return;
 			}
 			foreach(Window w in OwnedWindows.Cast<Window>().ToList()) { try { w.Close(); } catch(Exception) { } }
@@ -934,22 +934,22 @@ namespace Cerberus.App.Views
 			Session.Close();
 			m_lockedPath = p;
 			UpdateUi();
-			Status("Base verrouillée.");
+			Status(L.T("Base verrouillée."));
 		}
 
 		private async Task ClassicAsync()
 		{
 			string exe = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "classic", "KeePassCerberus.exe");
-			if(!File.Exists(exe)) { Dialog.Error(this, "Interface classique", "Introuvable : " + exe); return; }
+			if(!File.Exists(exe)) { Dialog.Error(this, L.T("Interface classique"), L.T("Introuvable : ") + exe); return; }
 			string p = Session.Path ?? m_lockedPath;
 			if(Session.IsOpen)
 			{
-				if(!Dialog.Confirm(this, "Interface classique", "La base va être verrouillée ici puis ouverte dans l'interface classique de KeePass (fonctions avancées : import/export, déclencheurs, plugins…).", "Ouvrir")) return;
+				if(!Dialog.Confirm(this, L.T("Interface classique"), L.T("La base va être verrouillée ici puis ouverte dans l'interface classique de KeePass (fonctions avancées : import/export, déclencheurs, plugins…)."), L.T("Ouvrir"))) return;
 				await LockAsync();
 				if(Session.IsOpen) return;
 			}
 			try { Process.Start(new ProcessStartInfo(exe, p != null ? "\"" + p + "\"" : "") { UseShellExecute = false }); }
-			catch(Exception ex) { Dialog.Error(this, "Interface classique", ex.Message); }
+			catch(Exception ex) { Dialog.Error(this, L.T("Interface classique"), ex.Message); }
 		}
 
 		// ================= auto-type =================
@@ -966,7 +966,7 @@ namespace Cerberus.App.Views
 			var src = System.Windows.Interop.HwndSource.FromHwnd(h);
 			src.AddHook(WndProc);
 			if(!RegisterHotKey(h, HotKeyId, MOD_CONTROL | MOD_ALT | MOD_NOREPEAT, 0x41 /* A */))
-				Status("Raccourci global Ctrl+Alt+A indisponible (déjà utilisé par une autre application).");
+				Status(L.T("Raccourci global Ctrl+Alt+A indisponible (déjà utilisé par une autre application)."));
 			Closed += delegate { UnregisterHotKey(h, HotKeyId); };
 		}
 
@@ -986,12 +986,12 @@ namespace Cerberus.App.Views
 		private async Task AutoTypeGlobalAsync(IntPtr target)
 		{
 			if(m_bTyping) return;
-			if(target == IntPtr.Zero || AutoType.IsOwnWindow(target)) { Status("Saisie automatique : placez-vous d'abord dans la fenêtre cible."); return; }
+			if(target == IntPtr.Zero || AutoType.IsOwnWindow(target)) { Status(L.T("Saisie automatique : placez-vous d'abord dans la fenêtre cible.")); return; }
 			string title = AutoType.WindowTitle(target);
 			if(!Session.IsOpen)
 			{
 				Activate();
-				if(m_lockedPath == null) { Dialog.Info(this, "Saisie automatique", "Ouvrez d'abord une base."); return; }
+				if(m_lockedPath == null) { Dialog.Info(this, L.T("Saisie automatique"), L.T("Ouvrez d'abord une base.")); return; }
 				await OpenAsync(m_lockedPath);
 				if(!Session.IsOpen) return;
 			}
@@ -1016,7 +1016,7 @@ namespace Cerberus.App.Views
 		{
 			if(Selected == null || m_bTyping) return;
 			PwEntry pe = Selected.Entry;
-			if(!AutoType.IsEnabled(pe)) { Dialog.Info(this, "Saisie automatique", "La saisie automatique est désactivée pour cette entrée (onglet « Saisie auto »)."); return; }
+			if(!AutoType.IsEnabled(pe)) { Dialog.Info(this, L.T("Saisie automatique"), L.T("La saisie automatique est désactivée pour cette entrée (onglet « Saisie auto »).")); return; }
 			// Like KeePass: minimise, then type into the window that becomes active.
 			m_bTyping = true;
 			WindowState = WindowState.Minimized;
@@ -1025,7 +1025,7 @@ namespace Cerberus.App.Views
 			if(target == IntPtr.Zero || AutoType.IsOwnWindow(target))
 			{
 				WindowState = WindowState.Normal;
-				Status("Saisie automatique : aucune fenêtre cible trouvée.");
+				Status(L.T("Saisie automatique : aucune fenêtre cible trouvée."));
 				m_bTyping = false;
 				return;
 			}
@@ -1039,28 +1039,28 @@ namespace Cerberus.App.Views
 			try
 			{
 				await Task.Run(() => AutoType.Perform(pe, seq, target));
-				Status("Saisie automatique effectuée : " + pe.Strings.ReadSafe(PwDefs.TitleField));
+				Status(L.T("Saisie automatique effectuée : ") + pe.Strings.ReadSafe(PwDefs.TitleField));
 			}
-			catch(Exception ex) { Status("Saisie automatique échouée : " + ex.Message); }
+			catch(Exception ex) { Status(L.T("Saisie automatique échouée : ") + ex.Message); }
 			finally { m_bTyping = false; }
 		}
 
 		private PwEntry PickEntry(List<PwEntry> l, string title, int nSuggested)
 		{
-			CerbWindow w = new CerbWindow { Title = "Saisie automatique", Width = 480, Height = 460, WindowStartupLocation = WindowStartupLocation.CenterScreen, Topmost = true };
+			CerbWindow w = new CerbWindow { Title = L.T("Saisie automatique"), Width = 480, Height = 460, WindowStartupLocation = WindowStartupLocation.CenterScreen, Topmost = true };
 			DockPanel d = new DockPanel { Margin = new Thickness(22, 18, 22, 18) };
 			StackPanel head = new StackPanel();
-			head.Children.Add(new TextBlock { Text = "Choisir l'entrée à saisir", FontSize = 17, FontWeight = FontWeights.SemiBold });
-			TextBlock sub = new TextBlock { Text = "Fenêtre : " + title + (nSuggested > 0 ? "\nSuggestions d'après le titre en tête de liste : vérifiez que vous êtes sur le bon site." : ""), Margin = new Thickness(0, 2, 0, 10), TextWrapping = TextWrapping.Wrap, TextTrimming = TextTrimming.None };
+			head.Children.Add(new TextBlock { Text = L.T("Choisir l'entrée à saisir"), FontSize = 17, FontWeight = FontWeights.SemiBold });
+			TextBlock sub = new TextBlock { Text = L.T("Fenêtre : ") + title + (nSuggested > 0 ? "\n" + L.T("Suggestions d'après le titre en tête de liste : vérifiez que vous êtes sur le bon site.") : ""), Margin = new Thickness(0, 2, 0, 10), TextWrapping = TextWrapping.Wrap, TextTrimming = TextTrimming.None };
 			sub.SetResourceReference(TextBlock.ForegroundProperty, "Muted");
 			head.Children.Add(sub);
-			TextBox filter = new TextBox { Margin = new Thickness(0, 0, 0, 8), ToolTip = "Filtrer" };
+			TextBox filter = new TextBox { Margin = new Thickness(0, 0, 0, 8), ToolTip = L.T("Filtrer") };
 			head.Children.Add(filter);
 			DockPanel.SetDock(head, Dock.Top);
 			d.Children.Add(head);
 			StackPanel bar = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 10, 0, 0) };
-			Button cancel = new Button { Content = "Annuler", MinWidth = 96, Margin = new Thickness(0, 0, 8, 0), IsCancel = true };
-			Button ok = new Button { Content = "Saisir", MinWidth = 110, IsDefault = true, Style = (Style)FindResource("AccentButton") };
+			Button cancel = new Button { Content = L.T("Annuler"), MinWidth = 96, Margin = new Thickness(0, 0, 8, 0), IsCancel = true };
+			Button ok = new Button { Content = L.T("Saisir"), MinWidth = 110, IsDefault = true, Style = (Style)FindResource("AccentButton") };
 			bar.Children.Add(cancel); bar.Children.Add(ok);
 			DockPanel.SetDock(bar, Dock.Bottom);
 			d.Children.Add(bar);
