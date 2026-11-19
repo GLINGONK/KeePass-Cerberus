@@ -1,0 +1,20 @@
+# Build tools fetched locally (see README "Build")
+/tools/dotnet/
+/tools/refasm/
+/_download/
+
+# Build outputs
+/bin/
+/build/
+/distrib/
+obj/
+src/**/bin/
+
+# Personal / local
+memory.md
+*.config.xml
+*.user
+.vs/
+.vscode/
+.claude/
+/src/Build/KeePassLib_Distrib/

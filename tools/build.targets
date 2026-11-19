@@ -1,0 +1,18 @@
+<Project>
+  <!-- Injected via CustomAfterMicrosoftCommonTargets: build KeePass with the .NET SDK only (no Visual Studio). -->
+  <PropertyGroup>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <GenerateResourceMSBuildArchitecture>CurrentArchitecture</GenerateResourceMSBuildArchitecture>
+    <AppConfig>$(MSBuildThisFileDirectory)App.config</AppConfig>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <!-- 64-bit process: Argon2 up to 4 GiB -->
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateResourceMSBuildRuntime>CurrentRuntime</GenerateResourceMSBuildRuntime>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildProjectDirectory)\Cerberus\**\*.cs" />
+    <Compile Include="$(MSBuildProjectDirectory)\..\Cerberus.Core\*.cs" />
+    <Reference Include="$(MSBuildThisFileDirectory)libs\*.dll" Private="true" />
+  </ItemGroup>
+</Project>

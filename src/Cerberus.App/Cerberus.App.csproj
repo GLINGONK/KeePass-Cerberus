@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- KeePass Cerberus - WPF user interface (.NET Framework 4.8: Windows 7 SP1 / 8.1 / 10 / 11). -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>KeePassCerberus</AssemblyName>
+    <RootNamespace>Cerberus.App</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <Deterministic>true</Deterministic>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <AssemblyTitle>KeePass Cerberus</AssemblyTitle>
+    <Product>KeePass Cerberus</Product>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Copyright>KeePass © Dominik Reichl — KeePass Cerberus fork, GPL v2+</Copyright>
+    <FrameworkPathOverride>$(MSBuildThisFileDirectory)..\..\tools\refasm\build\.NETFramework\v4.8</FrameworkPathOverride>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Cerberus.Core\Cerberus.Core.csproj" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Security" />
+    <Reference Include="BouncyCastle.Cryptography">
+      <HintPath>..\..\tools\libs\BouncyCastle.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="QRCoder">
+      <HintPath>..\..\tools\libs-app\QRCoder.dll</HintPath>
+    </Reference>
+    <Resource Include="app.ico" />
+  </ItemGroup>
+</Project>

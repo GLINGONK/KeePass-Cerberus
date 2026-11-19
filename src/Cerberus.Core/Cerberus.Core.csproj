@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- KeePass Cerberus engine: KeePassLib (unchanged format/crypto) + Cerberus
+       cascade ciphers and Shamir. No UI. Shared by the WPF app and the
+       legacy KeePass WinForms UI. -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>Cerberus.Core</AssemblyName>
+    <RootNamespace>KeePassLib</RootNamespace>
+    <LangVersion>7.3</LangVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Nullable>disable</Nullable>
+    <Deterministic>true</Deterministic>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <FrameworkPathOverride>$(MSBuildThisFileDirectory)..\..\tools\refasm\build\.NETFramework\v4.8</FrameworkPathOverride>
+    <NoWarn>$(NoWarn);CS0618;CS1591</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\KeePassLib\**\*.cs" Exclude="..\KeePassLib\obj\**;..\KeePassLib\Properties\AssemblyInfo.cs" />
+    <Compile Include="*.cs" />
+    <EmbeddedResource Include="..\KeePassLib\Resources\*.resx" Condition="Exists('..\KeePassLib\Resources')" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml" />
+    <Reference Include="BouncyCastle.Cryptography">
+      <HintPath>..\..\tools\libs\BouncyCastle.Cryptography.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
