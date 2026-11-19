@@ -37,12 +37,12 @@ CloseApplications=yes
 [Languages]
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
-Name: "german"; MessagesFile: "compiler:LanguagesGerman.isl"
-Name: "spanish"; MessagesFile: "compiler:LanguagesSpanish.isl"
-Name: "italian"; MessagesFile: "compiler:LanguagesItalian.isl"
-Name: "portuguese"; MessagesFile: "compiler:LanguagesPortuguese.isl"
-Name: "dutch"; MessagesFile: "compiler:LanguagesDutch.isl"
-Name: "polish"; MessagesFile: "compiler:LanguagesPolish.isl"
+Name: "german"; MessagesFile: "compiler:Languages\German.isl"
+Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "italian"; MessagesFile: "compiler:Languages\Italian.isl"
+Name: "portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"
+Name: "dutch"; MessagesFile: "compiler:Languages\Dutch.isl"
+Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
