@@ -18,8 +18,8 @@
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <AssemblyTitle>KeePass Cerberus</AssemblyTitle>
     <Product>KeePass Cerberus</Product>
-    <Version>1.0.1</Version>
-    <FileVersion>1.0.1.0</FileVersion>
+    <Version>1.0.2</Version>
+    <FileVersion>1.0.2.0</FileVersion>
     <Copyright>KeePass © Dominik Reichl — KeePass Cerberus fork, GPL v2+</Copyright>
     <FrameworkPathOverride>$(MSBuildThisFileDirectory)..\..\tools\refasm\build\.NETFramework\v4.8</FrameworkPathOverride>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>

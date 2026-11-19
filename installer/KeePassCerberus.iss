@@ -2,7 +2,7 @@
 ; Build: ISCC.exe installer\KeePassCerberus.iss  (output: distrib\installer)
 
 #define AppName "KeePass Cerberus"
-#define AppVersion "1.0.1"
+#define AppVersion "1.0.2"
 #define AppExe "KeePassCerberus.exe"
 #define SrcDir "..\distrib\app"
 

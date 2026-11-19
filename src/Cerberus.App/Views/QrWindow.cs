@@ -26,6 +26,7 @@ namespace Cerberus.App.Views
 		private readonly TextBlock m_caption, m_timer;
 		private readonly DispatcherTimer m_tick;
 		private int m_left = AutoCloseSeconds;
+		private bool bClosing;
 
 		public QrWindow(PwEntry pe)
 		{
@@ -82,12 +83,14 @@ namespace Cerberus.App.Views
 			{
 				--m_left;
 				m_timer.Text = L.T("Fermeture automatique dans ") + m_left + " s";
-				if(m_left <= 0) Close();
+				if(m_left <= 0 && !bClosing) { bClosing = true; m_tick.Stop(); Close(); }
 			};
 			m_timer.Text = L.T("Fermeture automatique dans ") + m_left + " s";
 			m_tick.Start();
 			// Leaving the window (or the app) closes it, like a clipboard timeout.
-			Deactivated += delegate { if(IsLoaded) Close(); };
+
+			Closing += delegate { bClosing = true; };
+			Deactivated += delegate { if(IsLoaded && !bClosing) { bClosing = true; Dispatcher.BeginInvoke(new Action(Close)); } };
 			Closed += delegate { m_tick.Stop(); m_img.Source = null; };
 			Loaded += delegate { Show(0); };
 		}
